@@ -15,20 +15,39 @@ This folder contains everything needed to run Label Studio in Docker, including 
    bash start_labelstudio.sh
    ```
    This will:
-   - Create required folders (`~/labelstudio/data`, `~/docker`) with open permissions
+   - Create required folder (`./data`) with open permissions
    - Start Label Studio using Docker Compose
 
 3. **Access Label Studio:**
-   Open your browser and go to `http://<your-workstation-ip>:8080`
+   On GCP Cloud Workstation, open your browser and go to:
+   `https://port-8080-<your-workstation-id>.<cluser-id>.cloudworkstations.dev/user/login/`
+
 
 ---
 
+### Stopping and Restarting Label Studio
+
+To stop Label Studio and shut down the Docker containers:
+```sh
+docker compose down
+```
+
+To start Label Studio again:
+```sh
+docker compose up
+```
+
+**Details:**
+- `docker compose down` will stop and remove the running containers, but your data in `./data` will be preserved.
+- `docker compose up` will start the service again, using the same persistent data.
+- You can use `docker compose up -d` to run Label Studio in the background (detached mode).
+- To view logs, use `docker compose logs`.
+- If you need to rebuild the image after changes to the Dockerfile, use `docker compose build` before starting up.
+
 ### Manual Steps (if not using the script)
 ```sh
-mkdir -p ~/labelstudio/data
-chmod -R 777 ~/labelstudio/data
-mkdir -p ~/docker
-chmod -R 777 ~/docker
+mkdir -p ./data
+chmod -R 777 ./data
 cd CorAI/docker/labelstudio
 docker compose up
 ```
