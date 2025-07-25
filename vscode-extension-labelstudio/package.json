@@ -1,0 +1,28 @@
+{
+  "name": "labelstudio-manager",
+  "displayName": "Label Studio Manager",
+  "description": "VS Code extension to setup, start, stop, and manage Label Studio via Docker Compose.",
+  "version": "0.0.1",
+  "engines": { "vscode": ">=1.70.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onCommand:labelstudio.start", "onCommand:labelstudio.stop", "onCommand:labelstudio.status", "onCommand:labelstudio.logs"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "labelstudio.start", "title": "Label Studio: Start" },
+      { "command": "labelstudio.stop", "title": "Label Studio: Stop" },
+      { "command": "labelstudio.status", "title": "Label Studio: Status" },
+      { "command": "labelstudio.logs", "title": "Label Studio: Logs" }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.70.0",
+    "typescript": "^4.8.4",
+    "tslint": "^6.1.3"
+  },
+  "dependencies": {}
+}
