@@ -1,0 +1,15 @@
+services:
+  labelstudio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPACE_HOST=0.0.0.0
+      - DEBUG=True
+      - USE_X_FORWARDED_HOST=true
+      - USE_X_FORWARDED_PORT=true
+      - SECURE_PROXY_SSL_HEADER=HTTP_X_FORWARDED_PROTO,https
+    volumes:
+      - ~/labelstudio/data:/label-studio/data
