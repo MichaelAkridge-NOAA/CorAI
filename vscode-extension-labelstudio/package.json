@@ -13,14 +13,31 @@
       { "command": "labelstudio.stop", "title": "Label Studio: Stop" },
       { "command": "labelstudio.status", "title": "Label Studio: Status" },
       { "command": "labelstudio.logs", "title": "Label Studio: Logs" }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "labelstudio",
+          "title": "Label Studio",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "labelstudio": [
+        {
+          "id": "labelstudio.sidebar",
+          "name": "Label Studio Manager"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./"
   },
   "devDependencies": {
-    "@types/vscode": "^1.70.0",
+    "@types/vscode": "1.70.0",
     "typescript": "^4.8.4",
     "tslint": "^6.1.3"
   },
