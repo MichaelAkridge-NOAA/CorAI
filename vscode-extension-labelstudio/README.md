@@ -15,9 +15,10 @@ This extension lets you setup, start, stop, and manage Label Studio via Docker C
 2. Run:
    ```sh
    npm install
+   npm install --save-dev @types/vscode
    npm run compile
    ```
-   This installs dependencies and builds the extension.
+   This installs dependencies and builds the extension. If you see errors about missing 'vscode' types, run the second command above.
 
 ## Packaging and Installing
 To package the extension as a VSIX file for easy installation:
