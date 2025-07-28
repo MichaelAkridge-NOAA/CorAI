@@ -23,4 +23,12 @@ jobs:
         run: |
           mkdir -p docs/codelabs
           claat export codelabs/*.md
-          mv *.html docs/codelabs/ || true
+          # Move all generated codelab folders into docs/codelabs
+          for d in */ ; do
+            if [ -f "$d/index.html" ]; then
+              mkdir -p docs/codelabs/"$d"
+              mv "$d" docs/codelabs/
+            fi
+          done
+          # List output for troubleshooting
+          tree docs/codelabs || true
