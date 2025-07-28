@@ -1,27 +1,31 @@
+
 # CorAI Codelabs
 
-This site hosts interactive tutorials for workspace tools and data annotation, using [Google Codelabs tools](https://github.com/googlecodelabs/tools).
+This site hosts interactive tutorials for workspace tools and data annotation, built with [Google Codelabs tools](https://github.com/googlecodelabs/tools).
 
-## Tutorials
-- [Install Label Studio with Docker](https://googlecodelabs.github.io/tools/codelab/static/?path=/workspaces/CorAI/codelabs/labelstudio-docker-install.md)
+## How it works
+- All codelab source files are in the `codelabs/` folder (Markdown format).
+- On every push to `main`, GitHub Actions builds the HTML and puts it in `docs/codelabs/`.
+- The landing page is `docs/index.html`.
+- GitHub Pages serves everything from the `docs/` folder.
 
-## How to Add a New Codelab
-1. Write your tutorial in the `codelabs/` folder using the [Codelab Markdown format](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md).
-2. Push to `main`. The site will auto-build and deploy to GitHub Pages.
-3. Add a link to your new codelab in `docs/index.html`.
+## Add a new codelab
+1. Write your tutorial in `codelabs/` using the [Codelab Markdown format](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md).
+2. Add a link to your new codelab in `docs/index.html` (link to the generated folder, e.g. `codelabs/your-codelab-id/`).
+3. Commit and push to `main`. The site will auto-update.
 
-## Local Development
-Install the Codelabs tools:
-
-```bash
-npm install -g @googlecodelabs/tools
-```
-
-Preview a codelab locally:
-
-```bash
-claat serve codelabs/*.md
-```
+## Local preview (optional)
+If you want to preview locally:
+1. Install Go (https://go.dev/doc/install)
+2. Install claat:
+   ```bash
+   go install github.com/googlecodelabs/tools/claat@latest
+   export PATH=$PATH:$(go env GOPATH)/bin
+   ```
+3. Run:
+   ```bash
+   claat serve codelabs/*.md
+   ```
 
 ## Resources
 - [Google Codelabs Tools](https://github.com/googlecodelabs/tools)

@@ -21,6 +21,7 @@ jobs:
           export PATH=$PATH:$(go env GOPATH)/bin
       - name: Build Codelabs
         run: |
+          rm -rf docs/codelabs
           mkdir -p docs/codelabs
           claat export -o docs/codelabs codelabs/*.md
           # List output for troubleshooting
