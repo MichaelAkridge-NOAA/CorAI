@@ -9,13 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          node-version: '20'
-      - name: Install Codelabs Tools
+          go-version: '1.22'
+      - name: Install claat tool
         run: |
-          npm install -g @googlecodelabs/tools
+          git clone https://github.com/googlecodelabs/tools.git /tmp/codelabs-tools
+          cd /tmp/codelabs-tools/claat
+          go install
+          export PATH=$PATH:$(go env GOPATH)/bin
       - name: Build Codelabs
         run: |
           mkdir -p docs/codelabs
