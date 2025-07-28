@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-07-28T21:03:45Z",
+  "updated": "2025-07-28T21:08:05Z",
   "id": "taglab-install",
   "duration": 0,
   "title": "Install Taglab",
@@ -21,7 +21,7 @@
   ],
   "tags": [
     "annotation",
-    "tools",
+    "vital-rates",
     "web"
   ],
   "feedback": "https://github.com/MichaelAkridge-NOAA/CorAI/issues",
