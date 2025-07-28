@@ -24,9 +24,8 @@ jobs:
           mkdir -p docs/codelabs
           claat export codelabs/*.md
           # Move all generated codelab folders into docs/codelabs
-          for d in */ ; do
+          for d in labelstudio-docker-install/ ; do
             if [ -f "$d/index.html" ]; then
-              mkdir -p docs/codelabs/"$d"
               mv "$d" docs/codelabs/
             fi
           done
