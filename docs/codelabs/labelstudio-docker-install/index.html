@@ -1,0 +1,102 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Install Label Studio with Docker</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="labelstudio-docker-install"
+                  title="Install Label Studio with Docker"
+                  environment="web"
+                  feedback-link="https://github.com/MichaelAkridge-NOAA/CorAI/issues">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>This codelab will walk you through installing Label Studio using Docker Compose in your workspace.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prerequisites" duration="0">
+        <ul>
+<li>Docker and Docker Compose installed</li>
+<li>Basic command line knowledge</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 1: Clone the Repository" duration="0">
+        <pre><code language="language-bash" class="language-bash">git clone https://github.com/MichaelAkridge-NOAA/CorAI.git
+cd CorAI/docker/labelstudio
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2: Start Label Studio" duration="0">
+        <pre><code language="language-bash" class="language-bash">docker-compose up -d
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3: Access Label Studio" duration="0">
+        <p>Open your browser and go to <a href="http://localhost:8080" target="_blank">http://localhost:8080</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 4: Stop Label Studio" duration="0">
+        <pre><code language="language-bash" class="language-bash">docker-compose down
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps" duration="0">
+        <ul>
+<li>Explore Label Studio features</li>
+<li>Try annotating your own data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Resources" duration="0">
+        <ul>
+<li><a href="https://labelstud.io/guide/" target="_blank">Label Studio Documentation</a></li>
+<li><a href="https://github.com/MichaelAkridge-NOAA/CorAI" target="_blank">CorAI GitHub</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+<script src="/CorAI/codelabs/assets/close-button-patch.js"></script>
+</body>
+</html>

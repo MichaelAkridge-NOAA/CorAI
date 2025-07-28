@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-07-28T21:12:10Z",
+  "id": "labelstudio-docker-install",
+  "duration": 0,
+  "title": "Install Label Studio with Docker",
+  "authors": "Michael Akridge",
+  "summary": "Step-by-step guide to install Label Studio using Docker Compose.",
+  "source": "codelabs/labelstudio-docker-install.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "docker",
+    "labelstudio",
+    "setup"
+  ],
+  "tags": [
+    "annotation",
+    "object-detection",
+    "web"
+  ],
+  "feedback": "https://github.com/MichaelAkridge-NOAA/CorAI/issues",
+  "url": "labelstudio-docker-install"
+}
