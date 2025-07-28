@@ -22,12 +22,6 @@ jobs:
       - name: Build Codelabs
         run: |
           mkdir -p docs/codelabs
-          claat export codelabs/*.md
-          # Move all generated codelab folders into docs/codelabs
-          for d in labelstudio-docker-install/ ; do
-            if [ -f "$d/index.html" ]; then
-              mv "$d" docs/codelabs/
-            fi
-          done
+          claat export -o docs/codelabs codelabs/*.md
           # List output for troubleshooting
           tree docs/codelabs || true
