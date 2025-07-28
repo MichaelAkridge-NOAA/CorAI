@@ -3,11 +3,10 @@ id: taglab-install
 title: Install TagLab
 summary: Step-by-step guide to install TagLab for coral annotation.
 authors: Michael Akridge
-logo: https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/refs/heads/main/docs/logo/taglab.png
 categories: TagLab, Annotation, Setup
 environments: Web
 status: Published
-tags: annotation, tools
+tags: annotation,vital-rates
 feedback link: https://github.com/MichaelAkridge-NOAA/CorAI/issues
 
 <meta name="codelabs-base" content="/CorAI/">

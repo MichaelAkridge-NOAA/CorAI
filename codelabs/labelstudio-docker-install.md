@@ -1,14 +1,11 @@
-
-
 id: labelstudio-docker-install
 title: Install Label Studio with Docker
 summary: Step-by-step guide to install Label Studio using Docker Compose.
 authors: Michael Akridge
-logo: https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/refs/heads/main/docs/logo/ls.ico
 categories: Docker, LabelStudio, Setup
 environments: Web
 status: Published
-tags: annotation, tools
+tags: annotation, object-detection
 feedback link: https://github.com/MichaelAkridge-NOAA/CorAI/issues
 
 <meta name="codelabs-base" content="/CorAI/">
