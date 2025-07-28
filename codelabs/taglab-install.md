@@ -6,7 +6,7 @@ authors: Michael Akridge
 categories: TagLab, Annotation, Setup
 environments: Web
 status: Published
-tags: annotation,vital-rates
+tags: annotation, vital-rates
 feedback link: https://github.com/MichaelAkridge-NOAA/CorAI/issues
 
 <meta name="codelabs-base" content="/CorAI/">
