@@ -26,7 +26,7 @@ jobs:
           mkdir -p docs/codelabs
           echo "claat version:" && claat --version || true
           echo "Building codelabs..."
-          claat export -o docs/codelabs --prefix /CorAI/ codelabs/*.md
+          claat export -o docs/codelabs codelabs/*.md
           echo "Codelabs output:"
           tree docs/codelabs || true
       - name: Commit built codelabs
