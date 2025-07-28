@@ -21,8 +21,11 @@ jobs:
           export PATH=$PATH:$(go env GOPATH)/bin
       - name: Build Codelabs
         run: |
+          set -e
           rm -rf docs/codelabs
           mkdir -p docs/codelabs
+          echo "claat version:" && claat --version || true
+          echo "Building codelabs..."
           claat export -o docs/codelabs codelabs/*.md
-          # List output for troubleshooting
+          echo "Codelabs output:"
           tree docs/codelabs || true
