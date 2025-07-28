@@ -4,6 +4,9 @@
 
 CorAI (Coral AI) is a project focused on applying AI/ML to coral reef research, monitoring, and conservation. This repository is structured to support data science workflows, cloud deployment, documentation, and reproducible research.
 
+### Link:
+- Placeholder
+
 ### Main Folders
 - **scripts/**: Python and shell scripts for data processing, model training, and automation.
 - **notebooks/**: Jupyter notebooks for exploration, analysis, and prototyping.
