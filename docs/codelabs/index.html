@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CorAI Codelabs</title>
+  <style>
+    body { font-family: Roboto, Arial, sans-serif; background: #f7f9fb; margin: 0; }
+    header { background: #4F7DC9; color: #fff; padding: 1.5rem 1rem; text-align: center; }
+    .search-bar { margin: 2rem auto 1rem auto; max-width: 500px; display: flex; gap: 0.5rem; }
+    .search-bar input { flex: 1; padding: 0.5rem; font-size: 1rem; border-radius: 4px; border: 1px solid #ccc; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; }
+    .tag { background: #e3eafc; color: #2a3b6b; border-radius: 16px; padding: 0.3em 1em; cursor: pointer; font-size: 0.95em; transition: background 0.2s; }
+    .tag.selected { background: #4F7DC9; color: #fff; }
+    .codelab-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto 2rem auto; }
+    .codelab-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; transition: box-shadow 0.2s; }
+    .codelab-card:hover { box-shadow: 0 4px 16px #0002; }
+    .codelab-logo { height: 32px; width: 32px; object-fit: contain; margin-right: 0.7em; vertical-align: middle; }
+    .codelab-title { font-size: 1.2rem; font-weight: 600; color: #2a3b6b; margin: 0; display: flex; align-items: center; gap: 0.7em; }
+    .codelab-summary { color: #444; margin: 0.5em 0 0.5em 0; }
+    .codelab-tags { display: flex; flex-wrap: wrap; gap: 0.3em; }
+    .codelab-tag { background: #e3eafc; color: #2a3b6b; border-radius: 12px; padding: 0.2em 0.8em; font-size: 0.85em; }
+    .codelab-link { margin-top: auto; align-self: flex-end; background: #4F7DC9; color: #fff; text-decoration: none; padding: 0.5em 1.2em; border-radius: 4px; font-weight: 500; transition: background 0.2s; }
+    .codelab-link:hover { background: #34508b; }
+    @media (max-width: 600px) { .codelab-list { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header style="display:flex;align-items:center;gap:1em;margin-bottom:2em;justify-content:center;background:#4F7DC9;color:#fff;padding:1.5rem 1rem;text-align:center;">
+    <img src="https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/refs/heads/main/docs/logo/codelabs.svg" alt="Codelabs Logo" style="height:48px;">
+    <div style="text-align:left;">
+      <h1 style="margin:0;color:#fff;">CorAI Codelabs</h1>
+      <p style="font-size:1.15em;max-width:600px;margin:0;">Welcome to the CorAI Codelabs portal! Explore hands-on tutorials for workspace tools, data annotation, and more. Use the search or filter by tag to get started.</p>
+    </div>
+  </header>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search codelabs by title or summary...">
+  </div>
+  <div class="tags" id="tagFilters"></div>
+  <div class="codelab-list" id="codelabList"></div>
+  <script>
+    // List of codelab.json files (add new codelabs here)
+    const codelabJsonPaths = [
+      'labelstudio-docker-install/codelab.json',
+      'taglab-install/codelab.json'
+    ];
+    const codelabBase = './';
+    let codelabs = [];
+    let allTags = new Set();
+    let selectedTag = null;
+
+    // Load all codelab.json files
+    Promise.all(
+      codelabJsonPaths.map(path => fetch(codelabBase + path).then(r => r.json()))
+    ).then(data => {
+      codelabs = data;
+      data.forEach(c => (c.tags||[]).forEach(t => allTags.add(t)));
+      renderTags();
+      renderCodelabs();
+    });
+
+    function renderTags() {
+      const tagFilters = document.getElementById('tagFilters');
+      tagFilters.innerHTML = '';
+      Array.from(allTags).sort().forEach(tag => {
+        const el = document.createElement('span');
+        el.className = 'tag' + (selectedTag === tag ? ' selected' : '');
+        el.textContent = tag;
+        el.onclick = () => {
+          selectedTag = selectedTag === tag ? null : tag;
+          renderTags();
+          renderCodelabs();
+        };
+        tagFilters.appendChild(el);
+      });
+    }
+
+    function renderCodelabs() {
+      const list = document.getElementById('codelabList');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      list.innerHTML = '';
+      codelabs.filter(c => {
+        const matchesTag = !selectedTag || (c.tags||[]).includes(selectedTag);
+        const matchesSearch =
+          c.title.toLowerCase().includes(search) ||
+          (c.summary||'').toLowerCase().includes(search);
+        return matchesTag && matchesSearch;
+      }).forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'codelab-card';
+        card.innerHTML = `
+          <div class="codelab-title">${c.logo ? `<img src='${c.logo}' alt='${c.title} logo' class='codelab-logo'>` : ''}${c.title}</div>
+          <div class="codelab-summary">${c.summary||''}</div>
+          <div class="codelab-tags">${(c.tags||[]).map(t => `<span class='codelab-tag'>${t}</span>`).join(' ')}</div>
+          <a class="codelab-link" href="./${c.url}/" target="_blank">Open</a>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderCodelabs);
+  </script>
+</body>
+</html>
