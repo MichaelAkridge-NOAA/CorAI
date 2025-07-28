@@ -8,7 +8,7 @@ environments: Web
 status: Published
 feedback link: https://github.com/MichaelAkridge-NOAA/CorAI/issues
 
-
+<meta name="codelabs-base" content="/CorAI/">
 # Codelab: Installing TagLab for Coral Annotation
 
 > **Goal:** Install TagLab on your computer and launch it for the first time.

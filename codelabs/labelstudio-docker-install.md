@@ -7,6 +7,8 @@ environments: Web
 status: Published
 feedback link: https://github.com/MichaelAkridge-NOAA/CorAI/issues
 
+<meta name="codelabs-base" content="/CorAI/">
+
 # Install Label Studio with Docker
 
 ## Introduction
