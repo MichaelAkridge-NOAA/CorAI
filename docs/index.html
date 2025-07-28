@@ -51,10 +51,11 @@
 
     // Load all codelab.json files
     Promise.all(
-      codelabJsonPaths.map(path => fetch(codelabBase + path).then(r => r.json()))
+      codelabJsonPaths.map(path => fetch(codelabBase + path).then(r => r.ok ? r.json() : null))
     ).then(data => {
-      codelabs = data;
-      data.forEach(c => (c.tags||[]).forEach(t => allTags.add(t)));
+      codelabs = data.filter(Boolean);
+      allTags = new Set();
+      codelabs.forEach(c => (c.tags||[]).forEach(t => allTags.add(t)));
       renderTags();
       renderCodelabs();
     });
@@ -79,13 +80,18 @@
       const list = document.getElementById('codelabList');
       const search = document.getElementById('searchInput').value.toLowerCase();
       list.innerHTML = '';
-      codelabs.filter(c => {
+      let filtered = codelabs.filter(c => {
         const matchesTag = !selectedTag || (c.tags||[]).includes(selectedTag);
-        const matchesSearch =
+        const matchesSearch = !search ||
           c.title.toLowerCase().includes(search) ||
           (c.summary||'').toLowerCase().includes(search);
         return matchesTag && matchesSearch;
-      }).forEach(c => {
+      });
+      if (filtered.length === 0) {
+        list.innerHTML = '<div style="color:#888;text-align:center;padding:2em;">No codelabs found.</div>';
+        return;
+      }
+      filtered.forEach(c => {
         const card = document.createElement('div');
         card.className = 'codelab-card';
         card.innerHTML = `

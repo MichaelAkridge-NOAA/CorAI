@@ -1,4 +1,5 @@
 
+
 id: labelstudio-docker-install
 title: Install Label Studio with Docker
 summary: Step-by-step guide to install Label Studio using Docker Compose.
