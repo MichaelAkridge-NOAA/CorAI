@@ -29,8 +29,12 @@ jobs:
           claat export -o docs/codelabs codelabs/*.md
           echo "Codelabs output:"
           tree docs/codelabs || true
-      - name: Commit built codelabs
+      - name: Add close button patch script into codelab HTML & Commit
         run: |
+          find docs/codelabs -name index.html | while read f; do
+            sed -i '/<\/body>/i \
+<script src="/CorAI/codelabs/assets/close-button-patch.js"></script>' "$f"
+          done
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/codelabs
