@@ -39,19 +39,26 @@
   <div class="tags" id="tagFilters"></div>
   <div class="codelab-list" id="codelabList"></div>
   <script>
-    // List of codelab.json files (add new codelabs here)
-    const codelabJsonPaths = [
-  'codelabs/labelstudio-docker-install/codelab.json',
-  'codelabs/taglab-install/codelab.json'
+    // List of codelabs with logo URLs
+    const codelabEntries = [
+      {
+        path: 'codelabs/labelstudio-docker-install/codelab.json',
+        logo: 'https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/refs/heads/main/docs/logo/ls.ico'
+      },
+      {
+        path: 'codelabs/taglab-install/codelab.json',
+        logo: 'https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/refs/heads/main/docs/logo/taglab.png'
+      }
     ];
-    const codelabBase = './';
     let codelabs = [];
     let allTags = new Set();
     let selectedTag = null;
 
-    // Load all codelab.json files
+    // Load all codelab.json files and attach logo
     Promise.all(
-      codelabJsonPaths.map(path => fetch(codelabBase + path).then(r => r.ok ? r.json() : null))
+      codelabEntries.map(entry =>
+        fetch(entry.path).then(r => r.ok ? r.json().then(data => ({...data, logo: entry.logo})) : null)
+      )
     ).then(data => {
       codelabs = data.filter(Boolean);
       allTags = new Set();
