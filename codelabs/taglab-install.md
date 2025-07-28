@@ -1,4 +1,4 @@
-# Codelab frontmatter
+# Install Taglab
 id: taglab-install
 title: Install TagLab
 summary: Step-by-step guide to install TagLab for coral annotation.
