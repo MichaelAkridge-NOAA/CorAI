@@ -113,3 +113,41 @@ flowchart TD
   SAM --> SegOutput
 
 ```
+
+
+
+```mermaid
+flowchart TD
+  %% DATA SOURCES (Rectangles)
+  CNTrain[CN Training Data]
+  MARTrain[MAR PT Training Data]
+  VRChunk[VR Chunk Data]
+  BleachData[Bleaching Data]
+
+  %% MODELS (Diamonds)
+  CNClassifier{CN PT Classifier}
+  T3Model{T3 PT YOLO Model}
+  YT3P{YT3P Deployment}
+  YT3PSEG{YT3PSEG Segmentation Model}
+  SAM{SAM Models - SAM1, SAM2, SAM3}
+
+  %% OTHER / PROCESSES (Rounded boxes)
+  EvalCN(CN Evaluation - ROC AUC and Confusion Matrix)
+  DensePT(Dense PT Dataset)
+  Wrapper(Wrapper Dataset)
+  SegOutput(Segmentation Output - Segmask A and B)
+  Voting(Voting and Comparison)
+  DeployA(Deploy FY25 Images - Segmask A)
+  DeployB(Deploy FY25 Orthos - Segmask B)
+  Compare(Final Comparison with VRChunk)
+
+  %% FLOW
+  CNTrain --> CNClassifier --> EvalCN
+  MARTrain --> T3Model --> YT3P --> DensePT --> Wrapper --> YT3PSEG
+  YT3PSEG --> SegOutput --> Voting
+  Voting -->|Good| DeployA --> Compare
+  Voting -->|Not Good| DeployB --> Compare
+  T3Model --> SAM --> SegOutput
+  VRChunk --> Compare
+  BleachData --> T3Model
+```
