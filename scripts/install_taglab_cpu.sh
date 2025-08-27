@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# TagLab Installation Script for Ubuntu/Debian
+# TagLab CPU Installation Script for Ubuntu/Debian
 # Based on the TagLab Docker container setup
 # Author: Michael Akridge
 
 set -e  # Exit on any error
 
-echo "🚀 Starting TagLab installation..."
-echo "This script will install TagLab and its dependencies on Ubuntu/Debian systems."
+echo "🚀 Starting TagLab CPU installation..."
+echo "This script will install TagLab (CPU version) and its dependencies on Ubuntu/Debian systems."
 
 # Check if running on Ubuntu/Debian
 if ! command -v apt-get &> /dev/null; then
@@ -97,7 +97,7 @@ mkdir -p "$INSTALL_DIR"
 # Create and activate virtual environment
 echo "🐍 Creating Python virtual environment..."
 cd "$HOME"
-python3.11 -m venv taglab-env
+python3.11 -m venv taglab-cpu-env
 
 echo "📥 Cloning TagLab repository..."
 cd "$INSTALL_DIR"
@@ -112,7 +112,7 @@ fi
 
 # Install Python dependencies
 echo "📦 Installing Python dependencies..."
-source "$HOME/taglab-env/bin/activate"
+source "$HOME/taglab-cpu-env/bin/activate"
 pip install --upgrade pip setuptools wheel
 pip install rasterio
 
@@ -122,10 +122,10 @@ cd "$INSTALL_DIR/TagLab"
 python3.11 install.py cpu
 
 # Create launcher script
-echo "🚀 Creating TagLab launcher script..."
-cat > "$HOME/launch-taglab.sh" << 'EOF'
+echo "🚀 Creating TagLab CPU launcher script..."
+cat > "$HOME/launch-taglab-cpu.sh" << 'EOF'
 #!/bin/bash
-# TagLab Launcher Script
+# TagLab CPU Launcher Script
 
 # Set Qt environment variables for better compatibility
 export QT_QPA_PLATFORM=xcb
@@ -142,33 +142,33 @@ chmod 700 "$XDG_RUNTIME_DIR"
 
 # Activate virtual environment and launch TagLab
 cd ~/Desktop/data_stuff/TagLab
-source ~/taglab-env/bin/activate
+source ~/taglab-cpu-env/bin/activate
 python3.11 TagLab.py "$@"
 EOF
 
-chmod +x "$HOME/launch-taglab.sh"
+chmod +x "$HOME/launch-taglab-cpu.sh"
 
 # Add aliases to .bashrc for convenience
 echo "⚙️  Adding convenience aliases to .bashrc..."
-if ! grep -q "# TagLab Environment" "$HOME/.bashrc"; then
+if ! grep -q "# TagLab CPU Environment" "$HOME/.bashrc"; then
     cat >> "$HOME/.bashrc" << 'EOF'
 
-# TagLab Environment
-alias taglab='source ~/taglab-env/bin/activate && cd ~/Desktop/data_stuff/TagLab && python3.11 TagLab.py'
-alias activate-taglab='source ~/taglab-env/bin/activate && cd ~/Desktop/data_stuff/TagLab'
+# TagLab CPU Environment
+alias taglab-cpu='source ~/taglab-cpu-env/bin/activate && cd ~/Desktop/data_stuff/TagLab && python3.11 TagLab.py'
+alias activate-taglab-cpu='source ~/taglab-cpu-env/bin/activate && cd ~/Desktop/data_stuff/TagLab'
 EOF
 fi
 
 echo ""
-echo "🎉 TagLab installation completed successfully!"
+echo "🎉 TagLab CPU installation completed successfully!"
 echo ""
 echo "📋 Next steps:"
-echo "1. To launch TagLab, run: ~/launch-taglab.sh"
-echo "2. Or use the alias: taglab"
-echo "3. To activate the TagLab environment: activate-taglab"
+echo "1. To launch TagLab, run: ~/launch-taglab-cpu.sh"
+echo "2. Or use the alias: taglab-cpu"
+echo "3. To activate the TagLab environment: activate-taglab-cpu"
 echo ""
 echo "📂 TagLab is installed at: $INSTALL_DIR/TagLab"
-echo "🐍 Virtual environment: $HOME/taglab-env"
+echo "🐍 Virtual environment: $HOME/taglab-cpu-env"
 echo ""
 echo "💡 Tips:"
 echo "- Restart your terminal or run 'source ~/.bashrc' to use the new aliases"
