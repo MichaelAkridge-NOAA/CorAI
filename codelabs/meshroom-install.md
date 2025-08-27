@@ -1,5 +1,5 @@
 # Install Meshroom
-id: mesh## Installation Methods
+id: meshroom-install
 
 Choose the method that best fits your system:
 
