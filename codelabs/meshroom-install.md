@@ -1,11 +1,6 @@
 # Install Meshroom
 id: meshroom-install
-
-Choose the method that best fits your system:
-
-1. **🐧 Linux Automated Script** (Recommended)
-2. **📦 Manual Installation** (Advanced users)stall
-title: Install Meshroom for 3D Reconstruction
+title: Install Meshroom for 3D Reconstruction SfM Photogrammetry
 summary: Step-by-step guide to install Meshroom for photogrammetry and 3D reconstruction.
 authors: Michael Akridge
 categories: Meshroom, 3D Reconstruction, Photogrammetry
@@ -36,8 +31,8 @@ Meshroom is a free and open-source 3D reconstruction software developed by Alice
 Choose the method that best fits your system:
 
 1. **🐧 Linux Automated Script** (Recommended)
-2. **� Manual Installation** (Advanced users)
-3. **� Docker Container** (Development/Testing)
+2. **📦 Manual Installation** (Advanced users)
+3. **🐳 Docker Container** (Development/Testing)
 
 ---
 
@@ -146,9 +141,43 @@ For advanced users or custom setups:
 
 ---
 
+## Method 3: Docker Container
+
+Perfect for development environments or isolated installations:
+
+### Prerequisites
+- Docker installed on your system
+- Chrome Remote Desktop account (Google account)
+
+### Installation Steps
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/MichaelAkridge-NOAA/CorAI.git
+   cd CorAI/cloud/meshroom
+   ```
+
+2. **Build and run the container:**
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Set up Chrome Remote Desktop:**
+   - Execute the setup script in the container
+   - Follow the prompts to connect your Google account
+   - Access via [https://remotedesktop.google.com/access](https://remotedesktop.google.com/access)
+
+> 🌐 **Docker Benefits:**
+> - Complete desktop environment with Meshroom pre-installed
+> - Accessible from any device via web browser
+> - No local installation required
+> - Persistent data storage via Docker volumes
+
+---
+
 ## Launching Meshroom
 
-### Command Line
+### Linux (Script Installation)
 ```bash
 # Global command (after script installation)
 meshroom
@@ -160,20 +189,13 @@ meshroom
 meshroom_batch --input /path/to/images --output /path/to/output
 ```
 
-### Desktop Integration
-Create a desktop entry:
-```bash
-cat > ~/.local/share/applications/meshroom.desktop << EOF
-[Desktop Entry]
-Name=Meshroom
-Comment=3D Reconstruction Software
-Exec=/usr/local/bin/meshroom
-Icon=/opt/Meshroom-2025.1.0/meshroom/ui/img/meshroom.png
-Terminal=false
-Type=Application
-Categories=Graphics;3DGraphics;Photography;
-EOF
-```
+### Docker Container
+- Connect via Chrome Remote Desktop at [remotedesktop.google.com/access](https://remotedesktop.google.com/access)
+- Meshroom will be available in the desktop environment
+
+### Manual Installation
+- **Linux:** Run `meshroom` command or launch from applications menu
+- **Desktop Integration:** Create desktop shortcut using provided .desktop file
 
 ---
 
@@ -181,7 +203,9 @@ EOF
 
 ### Getting Started
 
-1. **Launch Meshroom** and you'll see the main interface with:
+When you first launch Meshroom:
+
+1. **Main Interface:** You'll see the main interface with:
    - **Images panel:** Drag and drop your photos here
    - **Graph view:** Shows the processing pipeline
    - **3D viewer:** Displays reconstruction results
@@ -189,20 +213,29 @@ EOF
 2. **Import Images:**
    - Drag photos into the Images panel
    - Or use File → Add Images/Folder
+   - Ensure good photo overlap (60-80%)
 
 3. **Start Reconstruction:**
    - Click "Start" to begin the photogrammetry process
    - Monitor progress in the Graph view
+   - Processing time varies by dataset size and hardware
 
 4. **View Results:**
    - Use the 3D viewer to examine your model
    - Export results from File → Export
 
-### Basic Requirements for Photos
+### Photo Requirements
 - **Overlap:** 60-80% overlap between consecutive photos
-- **Quality:** Sharp, well-lit images
+- **Quality:** Sharp, well-lit images without motion blur
 - **Format:** JPEG, PNG, TIFF supported
 - **Count:** Minimum 10-20 photos for simple objects
+- **Consistency:** Similar lighting and exposure settings
+
+> 📸 **Photography Tips:**
+> - Take photos from multiple angles around your subject
+> - Maintain consistent distance and lighting
+> - Avoid reflective or transparent surfaces
+> - Include some background features for better tracking
 
 ---
 
@@ -210,9 +243,9 @@ EOF
 
 ### Hardware Recommendations
 - **GPU:** NVIDIA GPU with CUDA support (highly recommended)
-- **RAM:** 16GB+ for large datasets
+- **RAM:** 16GB+ for large datasets (32GB+ for professional work)
 - **Storage:** SSD for faster I/O operations
-- **CPU:** Multi-core processor for CPU-only processing
+- **CPU:** Multi-core processor (8+ cores recommended)
 
 ### CUDA Setup (Optional but Recommended)
 ```bash
@@ -222,9 +255,15 @@ wget https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/
 sudo bash cuda_12.0.0_525.60.13_linux.run
 ```
 
+> 🚀 **GPU Benefits:**
+> - 10-50x faster processing compared to CPU-only
+> - Better handling of large, high-resolution image sets
+> - Enables processing of complex scenes with many photos
+> - Faster preview generation and mesh processing
+
 ---
 
-## Troubleshooting
+## Troubleshooting & Support
 
 ### Common Issues
 
@@ -262,6 +301,12 @@ nvcc --version
 meshroom --help | grep -i cuda
 ```
 
+**5. Out of Memory Errors**
+- Reduce image resolution before processing
+- Process smaller batches of images
+- Close other applications to free RAM
+- Consider upgrading hardware for large datasets
+
 ### Getting Help
 
 - **Documentation:** [Meshroom Manual](https://meshroom-manual.readthedocs.io)
@@ -286,21 +331,34 @@ meshroom_batch \
   --input /path/to/images \
   --pipeline /path/to/custom.mg \
   --output /path/to/output
+
+# Specific processing stages
+meshroom_batch \
+  --input /path/to/images \
+  --output /path/to/output \
+  --toNode Meshing
 ```
 
 ### Custom Settings
-- Edit processing nodes in the Graph view
-- Save custom pipelines for reuse
-- Adjust quality vs. speed trade-offs
-- Configure output formats and resolution
+- **Graph Editor:** Modify processing nodes and parameters
+- **Pipeline Templates:** Save custom pipelines for reuse
+- **Quality Settings:** Adjust trade-offs between speed and quality
+- **Output Formats:** Configure mesh formats (OBJ, PLY, ABC)
+- **Texture Settings:** Control texture resolution and quality
+
+### Professional Workflows
+- **Batch Processing:** Process multiple datasets automatically
+- **Cluster Computing:** Distribute processing across multiple machines
+- **Quality Control:** Implement validation steps in your pipeline
+- **Data Management:** Organize projects and maintain version control
 
 ---
 
 🎉 **You're ready to start creating 3D models with Meshroom!**
 
 ### Next Steps
-- Try reconstructing your first dataset
-- Explore different pipeline configurations
+- Try reconstructing your first coral or marine dataset
+- Explore different pipeline configurations for your specific needs
 - Learn about advanced photogrammetry techniques
 - Check out the [Meshroom tutorials](https://meshroom-manual.readthedocs.io/en/latest/tutorials/sketchfab/sketchfab.html)
-
+- Join the AliceVision community for tips and support
