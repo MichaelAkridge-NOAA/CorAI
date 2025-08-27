@@ -3,15 +3,29 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-08-27T00:49:18Z",
+  "updated": "2025-08-27T00:57:19Z",
   "id": "meshroom-install",
   "duration": 0,
   "title": "Install Meshroom",
-  "summary": "",
+  "authors": "Michael Akridge",
+  "summary": "Step-by-step guide to install Meshroom for photogrammetry and 3D reconstruction.",
   "source": "codelabs/meshroom-install.md",
   "theme": "",
-  "status": null,
-  "category": null,
-  "tags": [],
+  "status": [
+    "published"
+  ],
+  "category": [
+    "meshroom",
+    "3dreconstruction",
+    "photogrammetry"
+  ],
+  "tags": [
+    "3d-reconstruction",
+    "computer-vision",
+    "meshroom",
+    "photogrammetry",
+    "web"
+  ],
+  "feedback": "https://github.com/MichaelAkridge-NOAA/CorAI/issues",
   "url": "meshroom-install"
 }

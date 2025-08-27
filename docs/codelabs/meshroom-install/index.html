@@ -26,7 +26,7 @@
                   id="meshroom-install"
                   title="Install Meshroom"
                   environment="web"
-                  feedback-link="">
+                  feedback-link="https://github.com/MichaelAkridge-NOAA/CorAI/issues">
     
       <google-codelab-step label="About Meshroom" duration="0">
         <p>Meshroom is a free and open-source 3D reconstruction software developed by AliceVision. It provides a complete photogrammetry pipeline for creating 3D models from photographs.</p>
@@ -43,8 +43,8 @@
         <p>Choose the method that best fits your system:</p>
 <ol type="1">
 <li><strong>🐧 Linux Automated Script</strong> (Recommended)</li>
-<li><strong>� Manual Installation</strong> (Advanced users)</li>
-<li><strong>� Docker Container</strong> (Development/Testing)</li>
+<li><strong>📦 Manual Installation</strong> (Advanced users)</li>
+<li><strong>🐳 Docker Container</strong> (Development/Testing)</li>
 </ol>
 
 
@@ -142,8 +142,42 @@ sudo apt-get install -y \
 
       </google-codelab-step>
     
+      <google-codelab-step label="Method 3: Docker Container" duration="0">
+        <p>Perfect for development environments or isolated installations:</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Docker installed on your system</li>
+<li>Chrome Remote Desktop account (Google account)</li>
+</ul>
+<h2 is-upgraded>Installation Steps</h2>
+<ol type="1">
+<li><strong>Clone the repository:</strong><pre><code language="language-bash" class="language-bash">git clone https://github.com/MichaelAkridge-NOAA/CorAI.git
+cd CorAI/cloud/meshroom
+</code></pre>
+</li>
+<li><strong>Build and run the container:</strong><pre><code language="language-bash" class="language-bash">docker-compose up --build
+</code></pre>
+</li>
+<li><strong>Set up Chrome Remote Desktop:</strong><ul>
+<li>Execute the setup script in the container</li>
+<li>Follow the prompts to connect your Google account</li>
+<li>Access via <a href="https://remotedesktop.google.com/access" target="_blank">https://remotedesktop.google.com/access</a></li>
+</ul>
+</li>
+</ol>
+<p>🌐 <strong>Docker Benefits:</strong></p>
+<ul>
+<li>Complete desktop environment with Meshroom pre-installed</li>
+<li>Accessible from any device via web browser</li>
+<li>No local installation required</li>
+<li>Persistent data storage via Docker volumes</li>
+</ul>
+
+
+      </google-codelab-step>
+    
       <google-codelab-step label="Launching Meshroom" duration="0">
-        <h2 is-upgraded>Command Line</h2>
+        <h2 is-upgraded>Linux (Script Installation)</h2>
 <pre><code language="language-bash" class="language-bash"># Global command (after script installation)
 meshroom
 
@@ -153,27 +187,25 @@ meshroom
 # Command line tools
 meshroom_batch --input /path/to/images --output /path/to/output
 </code></pre>
-<h2 is-upgraded>Desktop Integration</h2>
-<p>Create a desktop entry:</p>
-<pre><code language="language-bash" class="language-bash">cat &gt; ~/.local/share/applications/meshroom.desktop &lt;&lt; EOF
-[Desktop Entry]
-Name=Meshroom
-Comment=3D Reconstruction Software
-Exec=/usr/local/bin/meshroom
-Icon=/opt/Meshroom-2025.1.0/meshroom/ui/img/meshroom.png
-Terminal=false
-Type=Application
-Categories=Graphics;3DGraphics;Photography;
-EOF
-</code></pre>
+<h2 is-upgraded>Docker Container</h2>
+<ul>
+<li>Connect via Chrome Remote Desktop at <a href="https://remotedesktop.google.com/access" target="_blank">remotedesktop.google.com/access</a></li>
+<li>Meshroom will be available in the desktop environment</li>
+</ul>
+<h2 is-upgraded>Manual Installation</h2>
+<ul>
+<li><strong>Linux:</strong> Run <code>meshroom</code> command or launch from applications menu</li>
+<li><strong>Desktop Integration:</strong> Create desktop shortcut using provided .desktop file</li>
+</ul>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="First Launch &amp; Basic Workflow" duration="0">
         <h2 is-upgraded>Getting Started</h2>
+<p>When you first launch Meshroom:</p>
 <ol type="1">
-<li><strong>Launch Meshroom</strong> and you&#39;ll see the main interface with:<ul>
+<li><strong>Main Interface:</strong> You&#39;ll see the main interface with:<ul>
 <li><strong>Images panel:</strong> Drag and drop your photos here</li>
 <li><strong>Graph view:</strong> Shows the processing pipeline</li>
 <li><strong>3D viewer:</strong> Displays reconstruction results</li>
@@ -182,11 +214,13 @@ EOF
 <li><strong>Import Images:</strong><ul>
 <li>Drag photos into the Images panel</li>
 <li>Or use File → Add Images/Folder</li>
+<li>Ensure good photo overlap (60-80%)</li>
 </ul>
 </li>
 <li><strong>Start Reconstruction:</strong><ul>
 <li>Click &#34;Start&#34; to begin the photogrammetry process</li>
 <li>Monitor progress in the Graph view</li>
+<li>Processing time varies by dataset size and hardware</li>
 </ul>
 </li>
 <li><strong>View Results:</strong><ul>
@@ -195,12 +229,20 @@ EOF
 </ul>
 </li>
 </ol>
-<h2 is-upgraded>Basic Requirements for Photos</h2>
+<h2 is-upgraded>Photo Requirements</h2>
 <ul>
 <li><strong>Overlap:</strong> 60-80% overlap between consecutive photos</li>
-<li><strong>Quality:</strong> Sharp, well-lit images</li>
+<li><strong>Quality:</strong> Sharp, well-lit images without motion blur</li>
 <li><strong>Format:</strong> JPEG, PNG, TIFF supported</li>
 <li><strong>Count:</strong> Minimum 10-20 photos for simple objects</li>
+<li><strong>Consistency:</strong> Similar lighting and exposure settings</li>
+</ul>
+<p>📸 <strong>Photography Tips:</strong></p>
+<ul>
+<li>Take photos from multiple angles around your subject</li>
+<li>Maintain consistent distance and lighting</li>
+<li>Avoid reflective or transparent surfaces</li>
+<li>Include some background features for better tracking</li>
 </ul>
 
 
@@ -210,9 +252,9 @@ EOF
         <h2 is-upgraded>Hardware Recommendations</h2>
 <ul>
 <li><strong>GPU:</strong> NVIDIA GPU with CUDA support (highly recommended)</li>
-<li><strong>RAM:</strong> 16GB+ for large datasets</li>
+<li><strong>RAM:</strong> 16GB+ for large datasets (32GB+ for professional work)</li>
 <li><strong>Storage:</strong> SSD for faster I/O operations</li>
-<li><strong>CPU:</strong> Multi-core processor for CPU-only processing</li>
+<li><strong>CPU:</strong> Multi-core processor (8+ cores recommended)</li>
 </ul>
 <h2 is-upgraded>CUDA Setup (Optional but Recommended)</h2>
 <pre><code language="language-bash" class="language-bash"># Install NVIDIA drivers and CUDA toolkit
@@ -220,11 +262,18 @@ sudo apt-get install nvidia-driver-535
 wget https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda_12.0.0_525.60.13_linux.run
 sudo bash cuda_12.0.0_525.60.13_linux.run
 </code></pre>
+<p>🚀 <strong>GPU Benefits:</strong></p>
+<ul>
+<li>10-50x faster processing compared to CPU-only</li>
+<li>Better handling of large, high-resolution image sets</li>
+<li>Enables processing of complex scenes with many photos</li>
+<li>Faster preview generation and mesh processing</li>
+</ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Troubleshooting" duration="0">
+      <google-codelab-step label="Troubleshooting &amp; Support" duration="0">
         <h2 is-upgraded>Common Issues</h2>
 <p><strong>1. GUI Won&#39;t Start</strong></p>
 <pre><code language="language-bash" class="language-bash"># Check display environment
@@ -252,6 +301,13 @@ nvcc --version
 # Verify Meshroom can see GPU
 meshroom --help | grep -i cuda
 </code></pre>
+<p><strong>5. Out of Memory Errors</strong></p>
+<ul>
+<li>Reduce image resolution before processing</li>
+<li>Process smaller batches of images</li>
+<li>Close other applications to free RAM</li>
+<li>Consider upgrading hardware for large datasets</li>
+</ul>
 <h2 is-upgraded>Getting Help</h2>
 <ul>
 <li><strong>Documentation: </strong><a href="https://meshroom-manual.readthedocs.io" target="_blank">Meshroom Manual</a></li>
@@ -276,21 +332,36 @@ meshroom_batch \
   --input /path/to/images \
   --pipeline /path/to/custom.mg \
   --output /path/to/output
+
+# Specific processing stages
+meshroom_batch \
+  --input /path/to/images \
+  --output /path/to/output \
+  --toNode Meshing
 </code></pre>
 <h2 is-upgraded>Custom Settings</h2>
 <ul>
-<li>Edit processing nodes in the Graph view</li>
-<li>Save custom pipelines for reuse</li>
-<li>Adjust quality vs. speed trade-offs</li>
-<li>Configure output formats and resolution</li>
+<li><strong>Graph Editor:</strong> Modify processing nodes and parameters</li>
+<li><strong>Pipeline Templates:</strong> Save custom pipelines for reuse</li>
+<li><strong>Quality Settings:</strong> Adjust trade-offs between speed and quality</li>
+<li><strong>Output Formats:</strong> Configure mesh formats (OBJ, PLY, ABC)</li>
+<li><strong>Texture Settings:</strong> Control texture resolution and quality</li>
+</ul>
+<h2 is-upgraded>Professional Workflows</h2>
+<ul>
+<li><strong>Batch Processing:</strong> Process multiple datasets automatically</li>
+<li><strong>Cluster Computing:</strong> Distribute processing across multiple machines</li>
+<li><strong>Quality Control:</strong> Implement validation steps in your pipeline</li>
+<li><strong>Data Management:</strong> Organize projects and maintain version control</li>
 </ul>
 <p>🎉 <strong>You&#39;re ready to start creating 3D models with Meshroom!</strong></p>
 <h2 is-upgraded>Next Steps</h2>
 <ul>
-<li>Try reconstructing your first dataset</li>
-<li>Explore different pipeline configurations</li>
+<li>Try reconstructing your first coral or marine dataset</li>
+<li>Explore different pipeline configurations for your specific needs</li>
 <li>Learn about advanced photogrammetry techniques</li>
 <li>Check out the <a href="https://meshroom-manual.readthedocs.io/en/latest/tutorials/sketchfab/sketchfab.html" target="_blank">Meshroom tutorials</a></li>
+<li>Join the AliceVision community for tips and support</li>
 </ul>
 
 
