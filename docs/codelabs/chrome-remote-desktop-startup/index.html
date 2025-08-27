@@ -1,0 +1,128 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Google Cloud Workstations How To</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="chrome-remote-desktop-startup"
+                  title="Google Cloud Workstations How To"
+                  environment="web"
+                  feedback-link="https://github.com/MichaelAkridge-NOAA/CorAI/issues">
+    
+      <google-codelab-step label="Step 1: Set Up Remote Access Authorization" duration="0">
+        <ol type="1">
+<li>Open your web browser on your <strong>local machine</strong> (not the cloud workstation)</li>
+<li>Navigate to <a href="https://remotedesktop.google.com/headless" target="_blank">https://remotedesktop.google.com/headless</a></li>
+<li>Sign in with your Google account if prompted</li>
+<li>Click on &#34;Set up via SSH&#34; to get the authorization script</li>
+</ol>
+<p>You&#39;ll receive a Debian Linux setup script that looks similar to this:</p>
+<pre><code language="language-bash" class="language-bash">DISPLAY= /opt/google/chrome-remote-desktop/start-host --code=&#34;4/0AY0e-g7...&#34; --redirect-url=&#34;https://remotedesktop.google.com/_/oauthredirect&#34; --name=$(hostname)
+</code></pre>
+<p>💡 <strong>Important:</strong> Copy this entire command - you&#39;ll need it for the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2: Execute Authorization Script on Cloud Workstation" duration="0">
+        <ol type="1">
+<li><strong>SSH into your cloud workstation</strong> or use the existing terminal connection</li>
+<li><strong>Paste and execute</strong> the authorization script you copied from Step 7</li>
+<li>The command will authorize your cloud workstation for remote access</li>
+</ol>
+<p>Example execution:</p>
+<pre><code language="language-bash" class="language-bash"># Paste your specific authorization script here
+DISPLAY= /opt/google/chrome-remote-desktop/start-host --code=&#34;your-code-here&#34; --redirect-url=&#34;https://remotedesktop.google.com/_/oauthredirect&#34; --name=$(hostname)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3: Verify Chrome Remote Desktop Service" duration="0">
+        <p>Ensure the Chrome Remote Desktop service is running:</p>
+<pre><code language="language-bash" class="language-bash">sudo service chrome-remote-desktop status
+</code></pre>
+<p>If it&#39;s not running, start it:</p>
+<pre><code language="language-bash" class="language-bash">sudo service chrome-remote-desktop start
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 4: Connect from Your Local Machine" duration="0">
+        <ol type="1">
+<li><strong>On your local machine</strong>, go back to <a href="https://remotedesktop.google.com/access" target="_blank">https://remotedesktop.google.com/access</a></li>
+<li>You should see your cloud workstation listed under &#34;Remote devices&#34;</li>
+<li>Click on your workstation name to initiate the connection</li>
+<li>Enter the PIN you set during authorization (if prompted)</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 5: Test Your Connection" duration="0">
+        <p>Once connected, you should see the XFCE desktop environment. Test your setup by:</p>
+<ul>
+<li><strong>Opening the file manager</strong> to explore the system</li>
+<li><strong>Launching Google Chrome</strong> from the applications menu</li>
+<li><strong>Testing network connectivity</strong> by browsing to a website</li>
+<li><strong>Checking available applications</strong> in the menu</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="0">
+        <p>If you encounter issues:</p>
+<p><strong>Connection Problems:</strong></p>
+<ul>
+<li>Verify the Chrome Remote Desktop service is running: <code>sudo service chrome-remote-desktop status</code></li>
+<li>Check firewall settings if connections fail</li>
+<li>Ensure you&#39;re signed into the same Google account on both machines</li>
+</ul>
+<p><strong>Performance Issues:</strong></p>
+<ul>
+<li>Adjust display quality in the remote desktop settings</li>
+<li>Close unnecessary applications on the cloud workstation</li>
+<li>Check network connectivity between your local machine and cloud</li>
+</ul>
+<p><strong>Authorization Issues:</strong></p>
+<ul>
+<li>Re-run the authorization script from Step 8</li>
+<li>Verify you have the correct permissions on the cloud workstation</li>
+</ul>
+<p>🎉 <strong>You&#39;re ready to use your Google Cloud Workstation with remote desktop access!</strong></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+<script src="/CorAI/codelabs/assets/close-button-patch.js"></script>
+</body>
+</html>

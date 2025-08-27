@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-08-27T00:14:36Z",
+  "id": "chrome-remote-desktop-startup",
+  "duration": 0,
+  "title": "Google Cloud Workstations How To",
+  "authors": "Michael Akridge",
+  "summary": "Step-by-step guide to connect to cloud workstations with pre-installed Chrome Remote Desktop.",
+  "source": "codelabs/chrome-remote-desktop-startup.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cloud",
+    "remotedesktop",
+    "connection"
+  ],
+  "tags": [
+    "cloud",
+    "connection",
+    "remote-desktop",
+    "web",
+    "workstations"
+  ],
+  "feedback": "https://github.com/MichaelAkridge-NOAA/CorAI/issues",
+  "url": "chrome-remote-desktop-startup"
+}
