@@ -1,0 +1,309 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Install Meshroom</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="mesh## Installation Methods"
+                  title="Install Meshroom"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="About Meshroom" duration="0">
+        <p>Meshroom is a free and open-source 3D reconstruction software developed by AliceVision. It provides a complete photogrammetry pipeline for creating 3D models from photographs.</p>
+<ul>
+<li><strong>GitHub Repository: </strong><a href="https://github.com/alicevision/Meshroom" target="_blank">https://github.com/alicevision/Meshroom</a></li>
+<li><strong>Official Website: </strong><a href="https://alicevision.org" target="_blank">https://alicevision.org</a></li>
+<li><strong>Documentation: </strong><a href="https://meshroom-manual.readthedocs.io" target="_blank">Meshroom Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installation Methods" duration="0">
+        <p>Choose the method that best fits your system:</p>
+<ol type="1">
+<li><strong>🐧 Linux Automated Script</strong> (Recommended)</li>
+<li><strong>� Manual Installation</strong> (Advanced users)</li>
+<li><strong>� Docker Container</strong> (Development/Testing)</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Method 1: Linux Automated Installation Script" duration="0">
+        <p>Our automated script installs Meshroom with all required dependencies and desktop libraries.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Ubuntu 20.04+ or Debian-based Linux distribution</li>
+<li>Root/sudo privileges</li>
+<li>At least 4GB free disk space</li>
+<li>Internet connection for downloading</li>
+</ul>
+<h2 is-upgraded>Installation Steps</h2>
+<ol type="1">
+<li><strong>Download the installation script:</strong><pre><code language="language-bash" class="language-bash">wget https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/main/scripts/install_meshroom.sh
+chmod +x install_meshroom.sh
+</code></pre>
+</li>
+<li><strong>Run the installation with default settings:</strong><pre><code language="language-bash" class="language-bash">sudo bash install_meshroom.sh
+</code></pre>
+</li>
+<li><strong>Or specify a custom version:</strong><pre><code language="language-bash" class="language-bash">sudo bash install_meshroom.sh --version 2025.1.0
+</code></pre>
+</li>
+<li><strong>Launch Meshroom:</strong><pre><code language="language-bash" class="language-bash">meshroom
+# OR directly
+/opt/Meshroom-2025.1.0/Meshroom
+</code></pre>
+</li>
+</ol>
+<h2 is-upgraded>What the Script Does</h2>
+<p>✅ <strong>Automated Installation Process:</strong></p>
+<ul>
+<li>Updates system packages and installs required dependencies</li>
+<li>Installs essential desktop libraries (Qt, OpenGL, X11 components)</li>
+<li>Downloads and extracts Meshroom from official Zenodo releases</li>
+<li>Creates global <code>meshroom</code> command in <code>/usr/local/bin</code></li>
+<li>Sets up proper permissions and file structure</li>
+</ul>
+<h2 is-upgraded>Script Options</h2>
+<pre><code language="language-bash" class="language-bash"># Display help
+sudo bash install_meshroom.sh --help
+
+# Install specific version
+sudo bash install_meshroom.sh --version 2024.1.0
+
+# Use custom download URL
+sudo bash install_meshroom.sh --url https://custom-url/Meshroom.tar.gz
+</code></pre>
+<h2 is-upgraded>Installed Dependencies</h2>
+<p>The script automatically installs these required libraries:</p>
+<ul>
+<li><code>libxcb-cursor0</code> - X11 cursor support</li>
+<li><code>libxcb-xinerama0</code> - Multi-monitor support</li>
+<li><code>libxkbcommon-x11-0</code> - Keyboard handling</li>
+<li><code>libxcb-icccm4</code> - Window management</li>
+<li><code>libxcb-image0</code> - Image handling</li>
+<li><code>libxcb-keysyms1</code> - Key symbol mapping</li>
+<li><code>libxcb-render-util0</code> - Rendering utilities</li>
+<li><code>libgl1</code> - OpenGL support</li>
+<li><code>libglib2.0-0</code> - Core libraries</li>
+<li><code>libdbus-1-3</code> - Desktop bus communication</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Method 2: Manual Installation" duration="0">
+        <p>For advanced users or custom setups:</p>
+<h2 is-upgraded>Download from Official Sources</h2>
+<ol type="1">
+<li><strong>Visit the Meshroom releases:</strong><ul>
+<li>Go to <a href="https://github.com/alicevision/Meshroom/releases" target="_blank">Meshroom Releases</a></li>
+<li>Or download from <a href="https://zenodo.org/records/16887472" target="_blank">Zenodo</a></li>
+</ul>
+</li>
+<li><strong>Download the Linux tarball:</strong><pre><code language="language-bash" class="language-bash">wget https://zenodo.org/records/16887472/files/Meshroom-2025.1.0-Linux.tar.gz
+</code></pre>
+</li>
+<li><strong>Extract and install:</strong><pre><code language="language-bash" class="language-bash">sudo tar -xzf Meshroom-2025.1.0-Linux.tar.gz -C /opt
+sudo ln -sf /opt/Meshroom-2025.1.0/Meshroom /usr/local/bin/meshroom
+</code></pre>
+</li>
+<li><strong>Install system dependencies manually:</strong><pre><code language="language-bash" class="language-bash">sudo apt-get update
+sudo apt-get install -y \
+  libxcb-cursor0 libxcb-xinerama0 libxkbcommon-x11-0 \
+  libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+  libxcb-render-util0 libgl1 libglib2.0-0 libdbus-1-3
+</code></pre>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Launching Meshroom" duration="0">
+        <h2 is-upgraded>Command Line</h2>
+<pre><code language="language-bash" class="language-bash"># Global command (after script installation)
+meshroom
+
+# Direct path
+/opt/Meshroom-2025.1.0/Meshroom
+
+# Command line tools
+meshroom_batch --input /path/to/images --output /path/to/output
+</code></pre>
+<h2 is-upgraded>Desktop Integration</h2>
+<p>Create a desktop entry:</p>
+<pre><code language="language-bash" class="language-bash">cat &gt; ~/.local/share/applications/meshroom.desktop &lt;&lt; EOF
+[Desktop Entry]
+Name=Meshroom
+Comment=3D Reconstruction Software
+Exec=/usr/local/bin/meshroom
+Icon=/opt/Meshroom-2025.1.0/meshroom/ui/img/meshroom.png
+Terminal=false
+Type=Application
+Categories=Graphics;3DGraphics;Photography;
+EOF
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="First Launch &amp; Basic Workflow" duration="0">
+        <h2 is-upgraded>Getting Started</h2>
+<ol type="1">
+<li><strong>Launch Meshroom</strong> and you&#39;ll see the main interface with:<ul>
+<li><strong>Images panel:</strong> Drag and drop your photos here</li>
+<li><strong>Graph view:</strong> Shows the processing pipeline</li>
+<li><strong>3D viewer:</strong> Displays reconstruction results</li>
+</ul>
+</li>
+<li><strong>Import Images:</strong><ul>
+<li>Drag photos into the Images panel</li>
+<li>Or use File → Add Images/Folder</li>
+</ul>
+</li>
+<li><strong>Start Reconstruction:</strong><ul>
+<li>Click &#34;Start&#34; to begin the photogrammetry process</li>
+<li>Monitor progress in the Graph view</li>
+</ul>
+</li>
+<li><strong>View Results:</strong><ul>
+<li>Use the 3D viewer to examine your model</li>
+<li>Export results from File → Export</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Basic Requirements for Photos</h2>
+<ul>
+<li><strong>Overlap:</strong> 60-80% overlap between consecutive photos</li>
+<li><strong>Quality:</strong> Sharp, well-lit images</li>
+<li><strong>Format:</strong> JPEG, PNG, TIFF supported</li>
+<li><strong>Count:</strong> Minimum 10-20 photos for simple objects</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Performance Optimization" duration="0">
+        <h2 is-upgraded>Hardware Recommendations</h2>
+<ul>
+<li><strong>GPU:</strong> NVIDIA GPU with CUDA support (highly recommended)</li>
+<li><strong>RAM:</strong> 16GB+ for large datasets</li>
+<li><strong>Storage:</strong> SSD for faster I/O operations</li>
+<li><strong>CPU:</strong> Multi-core processor for CPU-only processing</li>
+</ul>
+<h2 is-upgraded>CUDA Setup (Optional but Recommended)</h2>
+<pre><code language="language-bash" class="language-bash"># Install NVIDIA drivers and CUDA toolkit
+sudo apt-get install nvidia-driver-535
+wget https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda_12.0.0_525.60.13_linux.run
+sudo bash cuda_12.0.0_525.60.13_linux.run
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="0">
+        <h2 is-upgraded>Common Issues</h2>
+<p><strong>1. GUI Won&#39;t Start</strong></p>
+<pre><code language="language-bash" class="language-bash"># Check display environment
+echo $DISPLAY
+export DISPLAY=:0
+
+# Fix Qt platform issues
+export QT_QPA_PLATFORM=xcb
+export QT_X11_NO_MITSHM=1
+</code></pre>
+<p><strong>2. Missing Dependencies</strong></p>
+<pre><code language="language-bash" class="language-bash"># Re-run dependency installation
+sudo apt-get install -y libxcb-cursor0 libxcb-xinerama0 libxkbcommon-x11-0
+</code></pre>
+<p><strong>3. Permission Issues</strong></p>
+<pre><code language="language-bash" class="language-bash"># Fix binary permissions
+sudo chmod +x /opt/Meshroom-2025.1.0/Meshroom
+sudo chmod +x /usr/local/bin/meshroom
+</code></pre>
+<p><strong>4. CUDA Not Detected</strong></p>
+<pre><code language="language-bash" class="language-bash"># Check CUDA installation
+nvidia-smi
+nvcc --version
+
+# Verify Meshroom can see GPU
+meshroom --help | grep -i cuda
+</code></pre>
+<h2 is-upgraded>Getting Help</h2>
+<ul>
+<li><strong>Documentation: </strong><a href="https://meshroom-manual.readthedocs.io" target="_blank">Meshroom Manual</a></li>
+<li><strong>Community: </strong><a href="https://github.com/alicevision/meshroom/discussions" target="_blank">AliceVision Forum</a></li>
+<li><strong>Issues: </strong><a href="https://github.com/alicevision/meshroom/issues" target="_blank">GitHub Issues</a></li>
+<li><strong>CorAI Support: </strong><a href="https://github.com/MichaelAkridge-NOAA/CorAI/issues" target="_blank">CorAI Issues</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Advanced Usage" duration="0">
+        <h2 is-upgraded>Command Line Processing</h2>
+<pre><code language="language-bash" class="language-bash"># Batch processing
+meshroom_batch \
+  --input /path/to/images \
+  --output /path/to/output \
+  --verbose
+
+# Custom pipeline
+meshroom_batch \
+  --input /path/to/images \
+  --pipeline /path/to/custom.mg \
+  --output /path/to/output
+</code></pre>
+<h2 is-upgraded>Custom Settings</h2>
+<ul>
+<li>Edit processing nodes in the Graph view</li>
+<li>Save custom pipelines for reuse</li>
+<li>Adjust quality vs. speed trade-offs</li>
+<li>Configure output formats and resolution</li>
+</ul>
+<p>🎉 <strong>You&#39;re ready to start creating 3D models with Meshroom!</strong></p>
+<h2 is-upgraded>Next Steps</h2>
+<ul>
+<li>Try reconstructing your first dataset</li>
+<li>Explore different pipeline configurations</li>
+<li>Learn about advanced photogrammetry techniques</li>
+<li>Check out the <a href="https://meshroom-manual.readthedocs.io/en/latest/tutorials/sketchfab/sketchfab.html" target="_blank">Meshroom tutorials</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+<script src="/CorAI/codelabs/assets/close-button-patch.js"></script>
+</body>
+</html>

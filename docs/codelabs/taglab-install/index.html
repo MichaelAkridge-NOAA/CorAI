@@ -28,10 +28,33 @@
                   environment="web"
                   feedback-link="https://github.com/MichaelAkridge-NOAA/CorAI/issues">
     
+      <google-codelab-step label="Choosing Between CPU and GPU Installation" duration="0">
+        <p><strong>Use CPU Installation if:</strong></p>
+<ul>
+<li>You don&#39;t have an NVIDIA GPU</li>
+<li>You&#39;re new to TagLab and want a simpler setup</li>
+<li>You primarily work with smaller image datasets</li>
+<li>You want the most stable and compatible installation</li>
+</ul>
+<p><strong>Use GPU Installation if:</strong></p>
+<ul>
+<li>You have an NVIDIA GPU with CUDA support</li>
+<li>You work with large, high-resolution coral images</li>
+<li>You want to use AI-assisted annotation features</li>
+<li>You need faster processing for batch operations</li>
+</ul>
+
+
+      </google-codelab-step>
+    
       <google-codelab-step label="Installation Methods" duration="0">
         <p>Choose the method that best fits your system and preferences:</p>
 <ol type="1">
-<li><strong>🐧 Linux (Ubuntu/Debian) - Automated Script</strong> (Recommended)</li>
+<li><strong>🐧 Linux (Ubuntu/Debian) - Automated Script</strong> (Recommended) <ul>
+<li><strong>CPU Version</strong>: Standard installation for most users</li>
+<li><strong>GPU Version</strong>: CUDA-accelerated for enhanced performance</li>
+</ul>
+</li>
 <li><strong>🐳 Docker Container</strong> (Cross-platform)</li>
 <li><strong>📦 Manual Installation</strong> (All platforms)</li>
 </ol>
@@ -40,34 +63,60 @@
       </google-codelab-step>
     
       <google-codelab-step label="Method 1: Linux Automated Installation Script" duration="0">
-        <p>For Ubuntu/Debian systems, use our automated installation script:</p>
-<h2 is-upgraded>Prerequisites</h2>
+        <p>For Ubuntu/Debian systems, choose between CPU or GPU installation:</p>
+<h2 is-upgraded>Option 1A: CPU Installation (Recommended for most users)</h2>
+<h3 is-upgraded>Prerequisites</h3>
 <ul>
 <li>Ubuntu 20.04+ or Debian 11+ (with apt-get)</li>
 <li>Regular user account with sudo privileges</li>
 <li>At least 2GB free disk space</li>
 </ul>
-<h2 is-upgraded>Installation Steps</h2>
+<h3 is-upgraded>Installation Steps</h3>
 <ol type="1">
-<li><strong>Download the installation script:</strong><pre><code language="language-bash" class="language-bash">wget https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/main/scripts/install_taglab.sh
-chmod +x install_taglab.sh
+<li><strong>Download the CPU installation script:</strong><pre><code language="language-bash" class="language-bash">wget https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/main/scripts/install_taglab_cpu.sh
+chmod +x install_taglab_cpu.sh
 </code></pre>
 </li>
-<li><strong>Run the installation:</strong><pre><code language="language-bash" class="language-bash">./install_taglab.sh
+<li><strong>Run the installation:</strong><pre><code language="language-bash" class="language-bash">./install_taglab_cpu.sh
 </code></pre>
 </li>
-<li><strong>Launch TagLab:</strong><pre><code language="language-bash" class="language-bash">~/launch-taglab.sh
+<li><strong>Launch TagLab:</strong><pre><code language="language-bash" class="language-bash">~/launch-taglab-cpu.sh
 # OR use the alias (after restarting terminal)
-taglab
+taglab-cpu
 </code></pre>
 </li>
 </ol>
-<p>✅ <strong>What the script does:</strong></p>
+<h2 is-upgraded>Option 1B: GPU Installation (For CUDA-enabled systems)</h2>
+<h3 is-upgraded>Prerequisites</h3>
 <ul>
-<li>Installs all system dependencies (Qt5, GDAL, Python 3.11, etc.)</li>
-<li>Creates a Python virtual environment</li>
-<li>Clones and installs TagLab from source</li>
-<li>Sets up convenient launcher scripts and aliases</li>
+<li>Ubuntu 20.04+ or Debian 11+ (with apt-get)</li>
+<li>NVIDIA GPU with CUDA support</li>
+<li>NVIDIA drivers installed (recommended)</li>
+<li>Regular user account with sudo privileges</li>
+<li>At least 4GB free disk space</li>
+</ul>
+<h3 is-upgraded>Installation Steps</h3>
+<ol type="1">
+<li><strong>Download the GPU installation script:</strong><pre><code language="language-bash" class="language-bash">wget https://raw.githubusercontent.com/MichaelAkridge-NOAA/CorAI/main/scripts/install_taglab_gpu.sh
+chmod +x install_taglab_gpu.sh
+</code></pre>
+</li>
+<li><strong>Run the installation:</strong><pre><code language="language-bash" class="language-bash">./install_taglab_gpu.sh
+</code></pre>
+</li>
+<li><strong>Launch TagLab with GPU acceleration:</strong><pre><code language="language-bash" class="language-bash">~/launch-taglab-gpu.sh
+# OR use the alias (after restarting terminal)
+taglab-gpu
+</code></pre>
+</li>
+<li><strong>Test GPU functionality:</strong><pre><code language="language-bash" class="language-bash">taglab-gpu-test
+</code></pre>
+</li>
+</ol>
+<p>✅ <strong>What the scripts do:</strong></p>
+<ul>
+<li><strong>CPU Script</strong>: Installs all system dependencies (Qt5, GDAL, Python 3.11, etc.), creates a Python virtual environment, clones and installs TagLab from source, sets up convenient launcher scripts and aliases</li>
+<li><strong>GPU Script</strong>: Everything in CPU script PLUS CUDA toolkit installation, PyTorch with CUDA support, GPU-optimized libraries, and GPU availability testing</li>
 </ul>
 
 
@@ -143,9 +192,15 @@ cd TagLab
     
       <google-codelab-step label="Launching TagLab" duration="0">
         <h2 is-upgraded>Linux (Script Installation)</h2>
-<pre><code language="language-bash" class="language-bash">~/launch-taglab.sh
+<p><strong>CPU Version:</strong></p>
+<pre><code language="language-bash" class="language-bash">~/launch-taglab-cpu.sh
 # OR
-taglab  # (alias, restart terminal first)
+taglab-cpu  # (alias, restart terminal first)
+</code></pre>
+<p><strong>GPU Version:</strong></p>
+<pre><code language="language-bash" class="language-bash">~/launch-taglab-gpu.sh
+# OR
+taglab-gpu  # (alias, restart terminal first)
 </code></pre>
 <h2 is-upgraded>Docker Container</h2>
 <ul>
@@ -171,9 +226,18 @@ taglab  # (alias, restart terminal first)
 </ol>
 <p>🖥️ <strong>Performance Tips:</strong></p>
 <ul>
+<li><strong>CPU Version</strong>: Works well for standard annotation tasks and smaller datasets</li>
+<li><strong>GPU Version</strong>: Provides accelerated processing for AI-assisted features and large datasets</li>
 <li>TagLab works best with a modern graphics card and up-to-date drivers</li>
 <li>For large images, ensure you have sufficient RAM (8GB+ recommended)</li>
 <li>Use SSD storage for better performance with large datasets</li>
+</ul>
+<p>🚀 <strong>GPU Benefits:</strong></p>
+<ul>
+<li>Faster AI model inference for automated segmentation</li>
+<li>Accelerated image processing operations</li>
+<li>Better performance with large, high-resolution coral images</li>
+<li>Enhanced real-time preview capabilities</li>
 </ul>
 
 
@@ -185,6 +249,19 @@ taglab  # (alias, restart terminal first)
 <pre><code language="language-bash" class="language-bash">export QT_QPA_PLATFORM=xcb
 export QT_X11_NO_MITSHM=1
 </code></pre>
+<p><strong>GPU Installation: CUDA Not Found</strong></p>
+<ul>
+<li>Ensure NVIDIA drivers are installed: <code>nvidia-smi</code></li>
+<li>Verify CUDA installation: <code>nvcc --version</code></li>
+<li>Check PyTorch CUDA: <code>python3.11 -c "import torch; print(torch.cuda.is_available())"</code></li>
+<li>Use GPU test alias: <code>taglab-gpu-test</code></li>
+</ul>
+<p><strong>GPU Performance: Not Using GPU</strong></p>
+<ul>
+<li>Check GPU memory usage: <code>nvidia-smi</code></li>
+<li>Verify CUDA environment variables are set</li>
+<li>Restart terminal after installation to load new environment</li>
+</ul>
 <p><strong>Docker: Can&#39;t Connect to Remote Desktop</strong></p>
 <ul>
 <li>Ensure you completed the <code>/start-crd.sh</code> setup process</li>
