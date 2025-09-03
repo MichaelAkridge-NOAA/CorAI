@@ -1,21 +1,35 @@
 # Coral AI Model Development Pipeline
 
-Phase: 
 - **v0** (September 2025) Prototyping
 - **v1** (FY26) Iterative Development, integration and innovation
-
-## 📌 Overview
-
-The pipeline supports:
-- **Classification of corals**
-- **Segmentation of imagery** (tiled orthomosaics and raw images).
-- **Integration with YOLO11** for multipoint class prediction.
-- **Export to GIS environments** (shapefiles, geodatabases, ArcGIS).
-- **v1: Reconstruction** of orthomosaics and point clouds in later phases.  
-
 ---
 
-## 🚀 Version 0 (v0)
+## 🗓 September 2025 Breakdown (v0)
+
+- **Sept 2–4** → Kickoff, YOLO11 classifier (T1/T3).  
+- **Sept 9–12** → Segmentation model setup + tiling workflow.  
+- **Sept 17–19** → Integration: feed segments into YOLO11 multipoint classifier.  
+- **Sept 22–26** → Ortho-scale validation + mask-to-shapefile export.  
+- **Sept 29–Oct 3** → Geodatabase + ArcGIS scripting.  
+
+---
+## 🛠 Pipeline Diagram
+```mermaid
+flowchart TD
+    A["Input images and orthomosaics"] --> B["Tiling and preprocessing"]
+    B --> C["YOLO11 point and patch classification T1 and T3"]
+    B --> D["Segmentation models SAM2 Picogram CoralScop"]
+    D --> E["Apply segmentation to tiled orthomosaics"]
+    C --> F["Multipoint classification within segments"]
+    E --> F
+    F --> G["Create segmentation mask with classifications"]
+    G --> H["Export shapefiles and segments"]
+    H --> I["Convert to geodatabase/ArcGIS layers"]
+    I --> J["ARC scripts"]
+    J --> K["analysis via cloud workstations"]
+```
+
+## Version 0 (v0)
 
 **Focus:** Prototyping and validation of classification + segmentation workflow.  
 **Timeline:** September 2025  
@@ -56,7 +70,7 @@ The pipeline supports:
 
 ---
 
-## 🔜 Version 1 (v1)
+## Version 1 (v1)
 
 **Focus:** Iterative Development, integration and innovation. First stable integrated pipeline.  
 **Timeline:** Starting October 2025  
@@ -66,16 +80,6 @@ The pipeline supports:
 - Rebuild **3D point clouds** and **orthomosaic pipelines** with integrated classification/segmentation.  
 - Improve workflow automation for pilot workstation deployment.  
 - Strengthen interoperability with NOAA cloud environments.  
-
----
-
-## 🗓 September 2025 Breakdown (v0)
-
-- **Sept 2–4** → Kickoff, YOLO11 classifier (T1/T3).  
-- **Sept 9–12** → Segmentation model setup + tiling workflow.  
-- **Sept 17–19** → Integration: feed segments into YOLO11 multipoint classifier.  
-- **Sept 22–26** → Ortho-scale validation + mask-to-shapefile export.  
-- **Sept 29–Oct 3** → Geodatabase + ArcGIS scripting.  
 
 ---
 
@@ -89,25 +93,6 @@ The pipeline supports:
 
 ---
 
-
----
-
-## 🛠 Pipeline Diagram
-
-```mermaid
-flowchart TD
-    A[Input Images / Orthomosaics] --> B[Tiling / Preprocessing]
-    B --> C[YOLO11 Point/Patch Classification (T1, T3)]
-    B --> D[Segmentation Models (SAM2, Picogram, CoralScop)]
-    D --> E[Apply Segmentation to Tiled Orthomosaics]
-    C --> F[Feed Segments into YOLO11 Multipoint Classifier]
-    E --> F
-    F --> G[Create New Segmentation Mask + Classifications]
-    G --> H[Export Shapefiles + Segments]
-    H --> I[Convert to Geodatabase + ArcGIS Layers]
-    I --> J[ARC Scripts for Automation]
-    J --> K[Ecological Analysis + ED Pilot Workstations]
-```
 
 ## ⚙️ Dependencies
 
