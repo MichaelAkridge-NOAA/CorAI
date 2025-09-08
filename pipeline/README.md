@@ -8,7 +8,7 @@
 
 - **Sept 2–4** → Kickoff, YOLO11 classifier (T1/T3).  
 - **Sept 9–12** → Segmentation model setup + tiling workflow.  
-- **Sept 17–19** → Integration: feed segments into YOLO11 multipoint classifier.  
+- **Sept 17–19** → Integration:  segments +  YOLO11 multipoint classifier.  
 - **Sept 22–26** → Ortho-scale validation + mask-to-shapefile export.  
 - **Sept 29–Oct 3** → Geodatabase + ArcGIS scripting.  
 
