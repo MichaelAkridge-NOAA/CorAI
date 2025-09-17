@@ -1,0 +1,150 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Install GCS FUSE Mount</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="gcs-fuse-mount"
+                  title="Install GCS FUSE Mount"
+                  environment="web"
+                  feedback-link="https://github.com/MichaelAkridge-NOAA/CorAI/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Google Cloud Storage FUSE (gcsfuse) allows you to mount Cloud Storage buckets as file systems on Linux or macOS systems. This enables applications to access objects in Cloud Storage through standard file system operations.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prerequisites" duration="0">
+        <ul>
+<li>A Google Cloud Platform account with access to the target bucket</li>
+<li>Linux system with sudo privileges</li>
+<li>Google Cloud SDK (gcloud) installed</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installation Steps" duration="0">
+        <h2 is-upgraded>1. Create Local Mount Directory</h2>
+<p>Create a directory where the bucket will be mounted(example):</p>
+<pre><code language="language-bash" class="language-bash">mkdir -p ~/gcs/genomics
+</code></pre>
+<h2 is-upgraded>2. Authenticate with Google Cloud</h2>
+<p>Login and set up application default credentials:</p>
+<pre><code language="language-bash" class="language-bash">gcloud auth application-default login
+</code></pre>
+<p>This will open a browser window for authentication. Follow the prompts to complete the login process.</p>
+<h2 is-upgraded>3. Install gcsfuse</h2>
+<p>Update package manager and install required dependencies:</p>
+<pre><code language="language-bash" class="language-bash">sudo apt-get update
+sudo apt-get install -y curl lsb-release
+</code></pre>
+<p>Configure the gcsfuse repository:</p>
+<pre><code language="language-bash" class="language-bash">export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
+echo &#34;deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt $GCSFUSE_REPO main&#34; | sudo tee /etc/apt/sources.list.d/gcsfuse.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.asc
+</code></pre>
+<p>Update package list and install gcsfuse:</p>
+<pre><code language="language-bash" class="language-bash">sudo apt-get update
+sudo apt-get install gcsfuse
+</code></pre>
+<p>As one step:</p>
+<pre><code language="language-bash" class="language-bash">sudo apt-get update
+sudo apt-get install -y curl lsb-release
+export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
+echo &#34;deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt $GCSFUSE_REPO main&#34; | sudo tee /etc/apt/sources.list.d/gcsfuse.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.asc
+sudo apt-get update
+sudo apt-get install gcsfuse
+</code></pre>
+<h2 is-upgraded>4. Mount the Bucket</h2>
+<p>Mount the specific directory from the bucket to your local filesystem:</p>
+<pre><code language="language-bash" class="language-bash">gcsfuse --only-dir PIFSC/ESD/ARP/genomics nmfs_odp_pifsc ~/gcs/genomics
+</code></pre>
+<p><strong>Command breakdown:</strong></p>
+<ul>
+<li><code>--only-dir PIFSC/ESD/ARP/genomics</code>: Only mount specific directory from the bucket</li>
+<li><code>nmfs_odp_pifsc</code>: The name of the Google Cloud Storage bucket</li>
+<li><code>~/gcs/genomics</code>: Local/cloud machine mount point directory</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Usage" duration="0">
+        <p>Once mounted, you can access the bucket contents through standard file operations.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Unmounting" duration="0">
+        <p>When you&#39;re finished working with the mounted bucket, unmount it using:</p>
+<pre><code language="language-bash" class="language-bash">fusermount -u ~/gcs/genomics
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Important Notes" duration="0">
+        <ul>
+<li><strong>Performance</strong>: gcsfuse provides file system semantics but may not offer the same performance as native Cloud Storage operations</li>
+<li><strong>Permissions</strong>: Ensure your Google Cloud credentials have appropriate permissions for the target bucket</li>
+<li><strong>Network Dependency</strong>: The mount requires an active internet connection to access Cloud Storage</li>
+<li><strong>Caching</strong>: gcsfuse uses local caching to improve performance, but changes may not be immediately visible across different mount points</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="0">
+        <h2 is-upgraded>Common Issues</h2>
+<ol type="1">
+<li><strong>Permission Denied</strong>: Verify your Google Cloud credentials and bucket permissions</li>
+<li><strong>Mount Point Busy</strong>: Ensure the directory is not already mounted or in use</li>
+<li><strong>Network Issues</strong>: Check internet connectivity and firewall settings</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Additional Resources" duration="0">
+        <ul>
+<li><a href="https://cloud.google.com/storage/docs/gcs-fuse" target="_blank">Google Cloud Storage FUSE Documentation</a></li>
+<li><a href="https://github.com/GoogleCloudPlatform/gcsfuse" target="_blank">gcsfuse GitHub Repository</a></li>
+<li><a href="https://cloud.google.com/sdk/docs" target="_blank">Google Cloud SDK Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+<script src="/CorAI/codelabs/assets/close-button-patch.js"></script>
+</body>
+</html>

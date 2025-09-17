@@ -4,26 +4,28 @@
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
   "updated": "2025-09-17T20:17:05Z",
-  "id": "labelstudio-docker-install",
+  "id": "gcs-fuse-mount",
   "duration": 0,
-  "title": "Install Label Studio with Docker",
+  "title": "Install GCS FUSE Mount",
   "authors": "Michael Akridge",
-  "summary": "Step-by-step guide to install Label Studio using Docker Compose.",
-  "source": "codelabs/labelstudio-docker-install.md",
+  "summary": "Step-by-step guide to mount Google Cloud Storage buckets as local filesystems using gcsfuse.",
+  "source": "codelabs/gcs-fuse-mount.md",
   "theme": "",
   "status": [
     "published"
   ],
   "category": [
-    "docker",
-    "labelstudio",
+    "cloudstorage",
+    "fuse",
     "setup"
   ],
   "tags": [
-    "annotation",
-    "object-detection",
+    "cloud-storage",
+    "fuse",
+    "gcs",
+    "mount",
     "web"
   ],
   "feedback": "https://github.com/MichaelAkridge-NOAA/CorAI/issues",
-  "url": "labelstudio-docker-install"
+  "url": "gcs-fuse-mount"
 }
