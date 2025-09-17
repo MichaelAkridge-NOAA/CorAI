@@ -17,7 +17,7 @@ This tutorial provides step-by-step instructions for mounting a Google Cloud Sto
 
 Google Cloud Storage FUSE (gcsfuse) allows you to mount Cloud Storage buckets as file systems on Linux or macOS systems. This enables applications to access objects in Cloud Storage through standard file system operations.
 
-## Prerequisites
+### Prerequisites
 
 - A Google Cloud Platform account with access to the target bucket
 - Linux system with sudo privileges
@@ -66,6 +66,7 @@ Update package list and install gcsfuse:
 sudo apt-get update
 sudo apt-get install gcsfuse
 ```
+
 As one step:
 ```bash
 sudo apt-get update
@@ -77,7 +78,7 @@ sudo apt-get update
 sudo apt-get install gcsfuse
 ```
 
-### 4. Mount the Bucket
+## Mount a Bucket Folder
 
 Mount the specific directory from the bucket to your local filesystem:
 
@@ -90,11 +91,9 @@ gcsfuse --only-dir PIFSC/ESD/ARP/genomics nmfs_odp_pifsc ~/gcs/genomics
 - `nmfs_odp_pifsc`: The name of the Google Cloud Storage bucket
 - `~/gcs/genomics`: Local/cloud machine mount point directory
 
-## Usage
-
 Once mounted, you can access the bucket contents through standard file operations.
 
-## Unmounting
+## Unmounting Bucket
 
 When you're finished working with the mounted bucket, unmount it using:
 
@@ -109,8 +108,6 @@ fusermount -u ~/gcs/genomics
 - **Network Dependency**: The mount requires an active internet connection to access Cloud Storage
 - **Caching**: gcsfuse uses local caching to improve performance, but changes may not be immediately visible across different mount points
 
-## Troubleshooting
-
 ### Common Issues
 
 1. **Permission Denied**: Verify your Google Cloud credentials and bucket permissions
@@ -122,6 +119,5 @@ fusermount -u ~/gcs/genomics
 - [Google Cloud Storage FUSE Documentation](https://cloud.google.com/storage/docs/gcs-fuse)
 - [gcsfuse GitHub Repository](https://github.com/GoogleCloudPlatform/gcsfuse)
 - [Google Cloud SDK Documentation](https://cloud.google.com/sdk/docs)
-
 
 ---
