@@ -1,3 +1,14 @@
+# Install GCS FUSE Mount
+id: gcs-fuse-mount
+title: Install GCS FUSE Mount
+summary: Step-by-step guide to mount Google Cloud Storage buckets as local filesystems using gcsfuse.
+authors: Michael Akridge
+categories: Cloud Storage, FUSE, Setup
+environments: Web
+status: Published
+tags: gcs, fuse, cloud-storage, mount
+feedback link: https://github.com/MichaelAkridge-NOAA/CorAI/issues
+
 # Google Cloud Storage FUSE Mount Tutorial
 
 This tutorial provides step-by-step instructions for mounting a Google Cloud Storage bucket as a local filesystem using gcsfuse.
@@ -111,5 +122,6 @@ fusermount -u ~/gcs/genomics
 - [Google Cloud Storage FUSE Documentation](https://cloud.google.com/storage/docs/gcs-fuse)
 - [gcsfuse GitHub Repository](https://github.com/GoogleCloudPlatform/gcsfuse)
 - [Google Cloud SDK Documentation](https://cloud.google.com/sdk/docs)
+
 
 ---
