@@ -78,7 +78,13 @@ def list_projects(client) -> List[Any]:
         else:
             # Fallback to direct API call
             import requests
-            response = requests.get(f"{client.url}/api/projects/", headers={"Authorization": f"Token {client.api_key}"})
+            # Try Bearer token first (LS 1.20+), then Token (legacy)
+            for auth_type in ["Bearer", "Token"]:
+                response = requests.get(f"{client.url}/api/projects/", headers={"Authorization": f"{auth_type} {client.api_key}"})
+                if response.status_code != 401:
+                    response.raise_for_status()
+                    return response.json()
+            # If both fail, raise the last error
             response.raise_for_status()
             return response.json()
     except Exception as e:
@@ -95,7 +101,13 @@ def get_project(client, pid: int):
         else:
             # Fallback to direct API call
             import requests
-            response = requests.get(f"{client.url}/api/projects/{pid}/", headers={"Authorization": f"Token {client.api_key}"})
+            # Try Bearer token first (LS 1.20+), then Token (legacy)
+            for auth_type in ["Bearer", "Token"]:
+                response = requests.get(f"{client.url}/api/projects/{pid}/", headers={"Authorization": f"{auth_type} {client.api_key}"})
+                if response.status_code != 401:
+                    response.raise_for_status()
+                    return response.json()
+            # If both fail, raise the last error
             response.raise_for_status()
             return response.json()
     except Exception:
@@ -129,10 +141,25 @@ def tasks_iter(client, project_id: int, fields: str = "all", page_size: int = 10
             # Fallback to direct API call
             import requests
             page = 1
+            # Try Bearer token first (LS 1.20+), then Token (legacy)
+            auth_header = None
+            for auth_type in ["Bearer", "Token"]:
+                test_response = requests.get(
+                    f"{client.url}/api/projects/{project_id}/tasks/",
+                    headers={"Authorization": f"{auth_type} {client.api_key}"},
+                    params={"page": 1, "page_size": 1}
+                )
+                if test_response.status_code != 401:
+                    auth_header = {"Authorization": f"{auth_type} {client.api_key}"}
+                    break
+            
+            if not auth_header:
+                raise RuntimeError("Authentication failed with both Bearer and Token formats")
+            
             while True:
                 response = requests.get(
                     f"{client.url}/api/projects/{project_id}/tasks/",
-                    headers={"Authorization": f"Token {client.api_key}"},
+                    headers=auth_header,
                     params={"page": page, "page_size": page_size}
                 )
                 response.raise_for_status()
@@ -198,13 +225,20 @@ def build_export_snapshot(client, project_id: int, poll_seconds: int = 2, timeou
         else:
             # Fallback to requests
             import requests
-            response = requests.post(
-                f"{client.url}/api/projects/{project_id}/exports/",
-                headers={"Authorization": f"Token {client.api_key}"},
-                json={'title': f"snapshot-{project_id}"}
-            )
-            response.raise_for_status()
-            snap = response.json()
+            # Try Bearer token first (LS 1.20+), then Token (legacy)
+            for auth_type in ["Bearer", "Token"]:
+                response = requests.post(
+                    f"{client.url}/api/projects/{project_id}/exports/",
+                    headers={"Authorization": f"{auth_type} {client.api_key}"},
+                    json={'title': f"snapshot-{project_id}"}
+                )
+                if response.status_code != 401:
+                    response.raise_for_status()
+                    snap = response.json()
+                    break
+            else:
+                response.raise_for_status()
+                snap = response.json()
     except Exception as e:
         # Fallback to stream export if snapshot fails
         st.warning(f"Snapshot export failed for project {project_id}, falling back to stream export: {e}")
@@ -224,12 +258,19 @@ def build_export_snapshot(client, project_id: int, poll_seconds: int = 2, timeou
             else:
                 # Fallback API call
                 import requests
-                response = requests.get(
-                    f"{client.url}/api/projects/{project_id}/exports/{snap_id}/",
-                    headers={"Authorization": f"Token {client.api_key}"}
-                )
-                response.raise_for_status()
-                snap = response.json()
+                # Try Bearer token first (LS 1.20+), then Token (legacy)
+                for auth_type in ["Bearer", "Token"]:
+                    response = requests.get(
+                        f"{client.url}/api/projects/{project_id}/exports/{snap_id}/",
+                        headers={"Authorization": f"{auth_type} {client.api_key}"}
+                    )
+                    if response.status_code != 401:
+                        response.raise_for_status()
+                        snap = response.json()
+                        break
+                else:
+                    response.raise_for_status()
+                    snap = response.json()
             status = _safe_attr(snap, "status", "")
         except Exception:
             # Some SDKs don't expose .get(); try listing and filtering
@@ -238,12 +279,19 @@ def build_export_snapshot(client, project_id: int, poll_seconds: int = 2, timeou
                     exps = client.projects.exports.list(id=project_id)
                 else:
                     import requests
-                    response = requests.get(
-                        f"{client.url}/api/projects/{project_id}/exports/",
-                        headers={"Authorization": f"Token {client.api_key}"}
-                    )
-                    response.raise_for_status()
-                    exps = response.json()
+                    # Try Bearer token first (LS 1.20+), then Token (legacy)
+                    for auth_type in ["Bearer", "Token"]:
+                        response = requests.get(
+                            f"{client.url}/api/projects/{project_id}/exports/",
+                            headers={"Authorization": f"{auth_type} {client.api_key}"}
+                        )
+                        if response.status_code != 401:
+                            response.raise_for_status()
+                            exps = response.json()
+                            break
+                    else:
+                        response.raise_for_status()
+                        exps = response.json()
                 
                 for e in exps:
                     if _safe_attr(e, "id") == snap_id:
@@ -266,12 +314,19 @@ def build_export_snapshot(client, project_id: int, poll_seconds: int = 2, timeou
         else:
             # Fallback download
             import requests
-            response = requests.get(
-                f"{client.url}/api/projects/{project_id}/exports/{snap_id}/download/",
-                headers={"Authorization": f"Token {client.api_key}"}
-            )
-            response.raise_for_status()
-            buf.write(response.content)
+            # Try Bearer token first (LS 1.20+), then Token (legacy)
+            for auth_type in ["Bearer", "Token"]:
+                response = requests.get(
+                    f"{client.url}/api/projects/{project_id}/exports/{snap_id}/download/",
+                    headers={"Authorization": f"{auth_type} {client.api_key}"}
+                )
+                if response.status_code != 401:
+                    response.raise_for_status()
+                    buf.write(response.content)
+                    break
+            else:
+                response.raise_for_status()
+                buf.write(response.content)
     except TypeError:
         # Some SDKs require a file path; fall back to tmp file then read back
         tmp = Path(f"snapshot_{project_id}_{snap_id}.zip")
@@ -280,12 +335,19 @@ def build_export_snapshot(client, project_id: int, poll_seconds: int = 2, timeou
                 client.projects.exports.download(id=project_id, export_id=snap_id, path=str(tmp))
             else:
                 import requests
-                response = requests.get(
-                    f"{client.url}/api/projects/{project_id}/exports/{snap_id}/download/",
-                    headers={"Authorization": f"Token {client.api_key}"}
-                )
-                response.raise_for_status()
-                tmp.write_bytes(response.content)
+                # Try Bearer token first (LS 1.20+), then Token (legacy)
+                for auth_type in ["Bearer", "Token"]:
+                    response = requests.get(
+                        f"{client.url}/api/projects/{project_id}/exports/{snap_id}/download/",
+                        headers={"Authorization": f"{auth_type} {client.api_key}"}
+                    )
+                    if response.status_code != 401:
+                        response.raise_for_status()
+                        tmp.write_bytes(response.content)
+                        break
+                else:
+                    response.raise_for_status()
+                    tmp.write_bytes(response.content)
             buf = io.BytesIO(tmp.read_bytes())
         finally:
             try:
@@ -432,17 +494,24 @@ def create_project(client, title: str, label_config: str, description: str = "")
         else:
             # Fallback to direct API call
             import requests
-            response = requests.post(
-                f"{client.url}/api/projects/",
-                headers={"Authorization": f"Token {client.api_key}"},
-                json={
-                    'title': title,
-                    'label_config': label_config,
-                    'description': description
-                }
-            )
-            response.raise_for_status()
-            p = response.json()
+            # Try Bearer token first (LS 1.20+), then Token (legacy)
+            for auth_type in ["Bearer", "Token"]:
+                response = requests.post(
+                    f"{client.url}/api/projects/",
+                    headers={"Authorization": f"{auth_type} {client.api_key}"},
+                    json={
+                        'title': title,
+                        'label_config': label_config,
+                        'description': description
+                    }
+                )
+                if response.status_code != 401:
+                    response.raise_for_status()
+                    p = response.json()
+                    break
+            else:
+                response.raise_for_status()
+                p = response.json()
         
         return int(_safe_attr(p, "id"))
     except Exception as e:
@@ -463,12 +532,18 @@ def import_in_batches(client, project_id: int, items: List[Dict[str, Any]], batc
             else:
                 # Fallback to direct API call
                 import requests
-                response = requests.post(
-                    f"{client.url}/api/projects/{project_id}/import",
-                    headers={"Authorization": f"Token {client.api_key}"},
-                    json=payload
-                )
-                response.raise_for_status()
+                # Try Bearer token first (LS 1.20+), then Token (legacy)
+                for auth_type in ["Bearer", "Token"]:
+                    response = requests.post(
+                        f"{client.url}/api/projects/{project_id}/import",
+                        headers={"Authorization": f"{auth_type} {client.api_key}"},
+                        json=payload
+                    )
+                    if response.status_code != 401:
+                        response.raise_for_status()
+                        break
+                else:
+                    response.raise_for_status()
         except Exception as e:
             raise RuntimeError(f"Failed to import batch {i//batch + 1}: {e}")
             
