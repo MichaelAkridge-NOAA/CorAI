@@ -31,11 +31,59 @@ def connect_ls(base_url: str, api_key: str):
         raise RuntimeError(
             "label-studio-sdk not found or incompatible. Please `pip install label-studio-sdk`."
         )
+    
+    # Clean up the base URL
+    base_url = base_url.rstrip('/')
+    
     try:
-        client = ClientType(url=base_url, api_key=api_key)  # modern
-    except TypeError:
-        client = ClientType(base_url=base_url, api_key=api_key)  # legacy
-    return client
+        # Try the official SDK method from documentation first
+        # Personal Access Tokens work automatically with SDK
+        try:
+            from label_studio_sdk.client import LabelStudio
+            client = LabelStudio(base_url=base_url, api_key=api_key)
+        except ImportError:
+            # Fallback to the dynamically imported ClientType
+            client = ClientType(base_url=base_url, api_key=api_key)
+        except TypeError:
+            # Try different parameter combinations for older SDK versions
+            try:
+                client = ClientType(url=base_url, api_key=api_key)
+            except TypeError:
+                # Some versions use 'token' instead of 'api_key'
+                client = ClientType(url=base_url, token=api_key)
+        
+        # Store connection details for fallback
+        client.url = base_url
+        client.api_key = api_key
+        return client
+        
+    except Exception as e:
+        raise RuntimeError(f"Failed to create Label Studio client: {e}")
+
+
+def get_access_token_from_pat(base_url: str, pat_token: str) -> str:
+    """Convert Personal Access Token to short-lived access token for HTTP API"""
+    import requests
+    
+    try:
+        url = f"{base_url.rstrip('/')}/api/token/refresh"
+        response = requests.post(
+            url,
+            headers={"Content-Type": "application/json"},
+            json={"refresh": pat_token},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("access", "")
+        else:
+            st.warning(f"Token refresh failed: {response.status_code} - {response.text}")
+            return ""
+            
+    except Exception as e:
+        st.warning(f"Failed to refresh PAT token: {e}")
+        return ""
 
 
 def test_connection(base_url: str, api_key: str) -> tuple[bool, str]:
@@ -49,13 +97,17 @@ def test_connection(base_url: str, api_key: str) -> tuple[bool, str]:
         # Test basic connectivity first
         try:
             response = requests.get(f"{base_url}/health", timeout=10)
-            if response.status_code != 200:
+            if response.status_code == 200:
+                st.write("✅ Health check passed")
+            else:
                 # Try without /health endpoint
                 response = requests.get(base_url, timeout=10)
-        except:
-            return False, f"Cannot connect to {base_url}. Is Label Studio running?"
+                if response.status_code == 200:
+                    st.write("✅ Base URL accessible")
+        except Exception as e:
+            return False, f"Cannot connect to {base_url}. Is Label Studio running on port 8082? Error: {e}"
         
-        # Test authentication
+        # Test authentication with debugging
         endpoints = ["/api/projects/", "/api/projects"]
         auth_formats = [
             ("Bearer", f"Bearer {api_key}"),
@@ -63,20 +115,37 @@ def test_connection(base_url: str, api_key: str) -> tuple[bool, str]:
         ]
         
         for endpoint in endpoints:
+            st.write(f"Testing endpoint: {endpoint}")
             for auth_name, auth_header in auth_formats:
                 try:
                     url = f"{base_url}{endpoint}"
-                    headers = {"Authorization": auth_header}
-                    response = requests.get(url, headers=headers, timeout=10)
+                    headers = {
+                        "Authorization": auth_header,
+                        "Content-Type": "application/json"
+                    }
+                    params = {"page": 1, "page_size": 10}  # Small request
+                    
+                    st.write(f"  Trying {auth_name} authentication...")
+                    response = requests.get(url, headers=headers, params=params, timeout=10)
+                    
+                    st.write(f"    Response: {response.status_code}")
                     
                     if response.status_code == 200:
                         data = response.json()
                         project_count = len(data) if isinstance(data, list) else len(data.get('results', []))
-                        return True, f"✅ Connected successfully! Found {project_count} projects using {auth_name} auth."
-                except:
+                        return True, f"✅ Connected successfully! Found {project_count} projects using {auth_name} auth on {endpoint}"
+                    elif response.status_code == 401:
+                        st.write(f"    ❌ 401 Unauthorized with {auth_name}")
+                    elif response.status_code == 403:
+                        st.write(f"    ❌ 403 Forbidden")
+                    else:
+                        st.write(f"    ❌ {response.status_code}: {response.text[:100]}")
+                        
+                except Exception as e:
+                    st.write(f"    ❌ Error: {e}")
                     continue
         
-        return False, "❌ Authentication failed. Please check your API token."
+        return False, "❌ Authentication failed with all methods. Please check your API token."
         
     except Exception as e:
         return False, f"❌ Connection test failed: {str(e)}"
@@ -112,71 +181,219 @@ def _safe_attr(x: Any, name: str, default=None):
 
 def list_projects(client) -> List[Any]:
     try:
-        # Try modern SDK first
+        # Priority 1: Try SDK methods (these handle PAT tokens automatically)
+        if hasattr(client, 'get_projects'):
+            try:
+                projects = client.get_projects()
+                st.success("✅ SDK get_projects() worked!")
+                return list(projects) if projects else []
+            except Exception as sdk_error:
+                st.warning(f"SDK get_projects failed: {sdk_error}, trying alternatives...")
+        
         if hasattr(client, 'projects') and hasattr(client.projects, 'list'):
-            return list(client.projects.list(page_size=1000))
-        elif hasattr(client, 'list_projects'):
-            return list(client.list_projects())
-        elif hasattr(client, 'get_projects'):
-            return list(client.get_projects())
-        else:
-            # Fallback to direct API call with better error handling
-            import requests
-            
-            # Get the base URL and API key
-            base_url = getattr(client, 'url', getattr(client, 'base_url', ''))
-            api_key = getattr(client, 'api_key', '')
-            
-            if not base_url or not api_key:
-                raise RuntimeError("Missing base_url or api_key from client")
-            
-            # Try different endpoints and auth formats
-            endpoints = ["/api/projects/", "/api/projects", "/api/dm/projects/"]
-            auth_formats = [
-                ("Bearer", f"Bearer {api_key}"),
-                ("Token", f"Token {api_key}"),
-                ("API-Key", api_key)
-            ]
-            
-            last_error = None
-            for endpoint in endpoints:
-                for auth_name, auth_header in auth_formats:
-                    try:
-                        url = f"{base_url.rstrip('/')}{endpoint}"
-                        headers = {"Authorization": auth_header}
-                        response = requests.get(url, headers=headers, timeout=30)
+            try:
+                projects = list(client.projects.list(page_size=100))
+                st.success("✅ SDK projects.list() worked!")
+                return projects
+            except Exception as sdk_error:
+                st.warning(f"SDK projects.list failed: {sdk_error}, trying alternatives...")
+        
+        if hasattr(client, 'list_projects'):
+            try:
+                projects = list(client.list_projects())
+                st.success("✅ SDK list_projects() worked!")
+                return projects
+            except Exception as sdk_error:
+                st.warning(f"SDK list_projects failed: {sdk_error}, trying HTTP API...")
+        
+        # Priority 2: Direct HTTP API calls with PAT token handling
+        st.info("Trying direct HTTP API calls with PAT token handling...")
+        import requests
+        
+        # Get the base URL and API key
+        base_url = getattr(client, 'url', getattr(client, 'base_url', ''))
+        api_key = getattr(client, 'api_key', '')
+        
+        if not base_url or not api_key:
+            raise RuntimeError("Missing base_url or api_key from client")
+        
+        # First, try to get an access token using PAT
+        access_token = get_access_token_from_pat(base_url, api_key)
+        
+        # Try different endpoints and auth formats
+        endpoints = ["/api/projects/", "/api/projects"]
+        auth_formats = []
+        
+        # If we got an access token from PAT, try Bearer with it
+        if access_token:
+            auth_formats.append(("Bearer (from PAT)", f"Bearer {access_token}"))
+        
+        # Also try the PAT directly with Bearer (some versions support this)
+        auth_formats.append(("Bearer (direct PAT)", f"Bearer {api_key}"))
+        
+        # Try legacy Token format as fallback
+        auth_formats.append(("Token (legacy)", f"Token {api_key}"))
+        
+        last_error = None
+        for endpoint in endpoints:
+            for auth_name, auth_header in auth_formats:
+                try:
+                    url = f"{base_url.rstrip('/')}{endpoint}"
+                    headers = {
+                        "Authorization": auth_header,
+                        "Content-Type": "application/json"
+                    }
+                    # Use simple pagination instead of large page_size
+                    params = {"page": 1, "page_size": 50}
+                    
+                    st.write(f"Trying {auth_name} auth on {endpoint}...")
+                    response = requests.get(url, headers=headers, params=params, timeout=30)
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        st.success(f"✅ Success with {auth_name} auth!")
                         
-                        if response.status_code == 200:
-                            data = response.json()
-                            # Handle both list and paginated responses
-                            if isinstance(data, list):
-                                return data
-                            elif isinstance(data, dict) and 'results' in data:
-                                return data['results']
-                            else:
-                                return data
-                        elif response.status_code == 401:
-                            last_error = f"401 Unauthorized with {auth_name} auth on {endpoint}"
-                            continue
-                        elif response.status_code == 403:
-                            last_error = f"403 Forbidden - insufficient permissions"
-                            continue
-                        elif response.status_code == 404:
-                            last_error = f"404 Not Found - endpoint {endpoint} does not exist"
-                            continue
+                        # Handle both list and paginated responses
+                        if isinstance(data, list):
+                            return data
+                        elif isinstance(data, dict) and 'results' in data:
+                            # Get all pages if paginated
+                            all_projects = data['results']
+                            page = 2
+                            while data.get('next'):
+                                params['page'] = page
+                                response = requests.get(url, headers=headers, params=params, timeout=30)
+                                if response.status_code == 200:
+                                    data = response.json()
+                                    all_projects.extend(data.get('results', []))
+                                    page += 1
+                                else:
+                                    break
+                            return all_projects
                         else:
-                            last_error = f"{response.status_code}: {response.text[:200]}"
-                            continue
+                            return data if isinstance(data, list) else [data]
                             
-                    except requests.exceptions.ConnectionError:
-                        last_error = f"Connection failed to {base_url} - is Label Studio running?"
-                    except requests.exceptions.Timeout:
-                        last_error = f"Request timeout to {base_url}"
-                    except Exception as e:
-                        last_error = f"Request error: {str(e)}"
+                    elif response.status_code == 401:
+                        last_error = f"401 Unauthorized with {auth_name} auth on {endpoint}"
+                        st.error(f"❌ {last_error}")
+                        continue
+                    elif response.status_code == 403:
+                        last_error = f"403 Forbidden - insufficient permissions"
+                        st.error(f"❌ {last_error}")
+                        continue
+                    elif response.status_code == 404:
+                        last_error = f"404 Not Found - endpoint {endpoint} does not exist"
+                        st.warning(f"⚠️ {last_error}")
+                        continue
+                    else:
+                        last_error = f"{response.status_code}: {response.text[:200]}"
+                        st.error(f"❌ {last_error}")
+                        continue
+                        
+                except requests.exceptions.ConnectionError:
+                    last_error = f"Connection failed to {base_url} - is Label Studio running on port 8082?"
+                    st.error(f"❌ {last_error}")
+                except requests.exceptions.Timeout:
+                    last_error = f"Request timeout to {base_url}"
+                    st.error(f"❌ {last_error}")
+                except Exception as e:
+                    last_error = f"Request error: {str(e)}"
+                    st.error(f"❌ {last_error}")
+        
+        # If we get here, all attempts failed
+        raise RuntimeError(f"All authentication attempts failed. Last error: {last_error}")
             
-            # If we get here, all attempts failed
-            raise RuntimeError(f"All authentication attempts failed. Last error: {last_error}")
+    except Exception as e:
+        if "401" in str(e) or "Unauthorized" in str(e):
+            raise RuntimeError(
+                f"Authentication failed (401 Unauthorized). Please check:\n"
+                f"1. Your API token is correct and not expired\n"
+                f"2. Generate a new token in Label Studio: Account & Settings → Access Token\n"
+                f"3. Make sure Label Studio is running and accessible\n"
+                f"4. For Personal Access Tokens, the SDK should handle token refresh automatically\n"
+                f"Original error: {e}"
+            )
+        else:
+            raise RuntimeError(f"Could not list projects: {e}")
+        
+        if not base_url or not api_key:
+            raise RuntimeError("Missing base_url or api_key from client")
+        
+        # Try different endpoints and auth formats
+        endpoints = ["/api/projects/", "/api/projects", "/api/dm/projects/"]
+        auth_formats = [
+            ("Bearer", f"Bearer {api_key}"),
+            ("Token", f"Token {api_key}"),
+        ]
+        
+        last_error = None
+        for endpoint in endpoints:
+            for auth_name, auth_header in auth_formats:
+                try:
+                    url = f"{base_url.rstrip('/')}{endpoint}"
+                    headers = {
+                        "Authorization": auth_header,
+                        "Content-Type": "application/json"
+                    }
+                    # Use simple pagination instead of large page_size
+                    params = {"page": 1, "page_size": 100}
+                    
+                    st.write(f"Trying {auth_name} auth on {endpoint}...")
+                    response = requests.get(url, headers=headers, params=params, timeout=30)
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        st.success(f"✅ Success with {auth_name} auth!")
+                        
+                        # Handle both list and paginated responses
+                        if isinstance(data, list):
+                            return data
+                        elif isinstance(data, dict) and 'results' in data:
+                            # Get all pages if paginated
+                            all_projects = data['results']
+                            page = 2
+                            while data.get('next'):
+                                params['page'] = page
+                                response = requests.get(url, headers=headers, params=params, timeout=30)
+                                if response.status_code == 200:
+                                    data = response.json()
+                                    all_projects.extend(data.get('results', []))
+                                    page += 1
+                                else:
+                                    break
+                            return all_projects
+                        else:
+                            return data if isinstance(data, list) else [data]
+                            
+                    elif response.status_code == 401:
+                        last_error = f"401 Unauthorized with {auth_name} auth on {endpoint}"
+                        st.error(f"❌ {last_error}")
+                        continue
+                    elif response.status_code == 403:
+                        last_error = f"403 Forbidden - insufficient permissions"
+                        st.error(f"❌ {last_error}")
+                        continue
+                    elif response.status_code == 404:
+                        last_error = f"404 Not Found - endpoint {endpoint} does not exist"
+                        st.warning(f"⚠️ {last_error}")
+                        continue
+                    else:
+                        last_error = f"{response.status_code}: {response.text[:200]}"
+                        st.error(f"❌ {last_error}")
+                        continue
+                        
+                except requests.exceptions.ConnectionError:
+                    last_error = f"Connection failed to {base_url} - is Label Studio running on port 8082?"
+                    st.error(f"❌ {last_error}")
+                except requests.exceptions.Timeout:
+                    last_error = f"Request timeout to {base_url}"
+                    st.error(f"❌ {last_error}")
+                except Exception as e:
+                    last_error = f"Request error: {str(e)}"
+                    st.error(f"❌ {last_error}")
+        
+        # If we get here, all attempts failed
+        raise RuntimeError(f"All authentication attempts failed. Last error: {last_error}")
             
     except Exception as e:
         if "401" in str(e) or "Unauthorized" in str(e):
@@ -727,7 +944,7 @@ st.caption("Query projects • Export (stream or snapshot) • Field rewrite •
 
 with st.sidebar:
     st.subheader("🔐 Connect")
-    base_url = st.text_input("Base URL", value="http://localhost:8080")
+    base_url = st.text_input("Base URL", value="http://localhost:8082")
     api_key = st.text_input("API Key (Personal Token)", type="password")
     
     col1, col2 = st.columns(2)
