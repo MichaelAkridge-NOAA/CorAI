@@ -38,6 +38,50 @@ def connect_ls(base_url: str, api_key: str):
     return client
 
 
+def test_connection(base_url: str, api_key: str) -> tuple[bool, str]:
+    """Test connection to Label Studio and return success status and message"""
+    try:
+        import requests
+        
+        # Clean up URL
+        base_url = base_url.rstrip('/')
+        
+        # Test basic connectivity first
+        try:
+            response = requests.get(f"{base_url}/health", timeout=10)
+            if response.status_code != 200:
+                # Try without /health endpoint
+                response = requests.get(base_url, timeout=10)
+        except:
+            return False, f"Cannot connect to {base_url}. Is Label Studio running?"
+        
+        # Test authentication
+        endpoints = ["/api/projects/", "/api/projects"]
+        auth_formats = [
+            ("Bearer", f"Bearer {api_key}"),
+            ("Token", f"Token {api_key}")
+        ]
+        
+        for endpoint in endpoints:
+            for auth_name, auth_header in auth_formats:
+                try:
+                    url = f"{base_url}{endpoint}"
+                    headers = {"Authorization": auth_header}
+                    response = requests.get(url, headers=headers, timeout=10)
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        project_count = len(data) if isinstance(data, list) else len(data.get('results', []))
+                        return True, f"✅ Connected successfully! Found {project_count} projects using {auth_name} auth."
+                except:
+                    continue
+        
+        return False, "❌ Authentication failed. Please check your API token."
+        
+    except Exception as e:
+        return False, f"❌ Connection test failed: {str(e)}"
+
+
 def _obj_to_dict(x: Any) -> Dict[str, Any]:
     if x is None:
         return {}
@@ -76,19 +120,75 @@ def list_projects(client) -> List[Any]:
         elif hasattr(client, 'get_projects'):
             return list(client.get_projects())
         else:
-            # Fallback to direct API call
+            # Fallback to direct API call with better error handling
             import requests
-            # Try Bearer token first (LS 1.20+), then Token (legacy)
-            for auth_type in ["Bearer", "Token"]:
-                response = requests.get(f"{client.url}/api/projects/", headers={"Authorization": f"{auth_type} {client.api_key}"})
-                if response.status_code != 401:
-                    response.raise_for_status()
-                    return response.json()
-            # If both fail, raise the last error
-            response.raise_for_status()
-            return response.json()
+            
+            # Get the base URL and API key
+            base_url = getattr(client, 'url', getattr(client, 'base_url', ''))
+            api_key = getattr(client, 'api_key', '')
+            
+            if not base_url or not api_key:
+                raise RuntimeError("Missing base_url or api_key from client")
+            
+            # Try different endpoints and auth formats
+            endpoints = ["/api/projects/", "/api/projects", "/api/dm/projects/"]
+            auth_formats = [
+                ("Bearer", f"Bearer {api_key}"),
+                ("Token", f"Token {api_key}"),
+                ("API-Key", api_key)
+            ]
+            
+            last_error = None
+            for endpoint in endpoints:
+                for auth_name, auth_header in auth_formats:
+                    try:
+                        url = f"{base_url.rstrip('/')}{endpoint}"
+                        headers = {"Authorization": auth_header}
+                        response = requests.get(url, headers=headers, timeout=30)
+                        
+                        if response.status_code == 200:
+                            data = response.json()
+                            # Handle both list and paginated responses
+                            if isinstance(data, list):
+                                return data
+                            elif isinstance(data, dict) and 'results' in data:
+                                return data['results']
+                            else:
+                                return data
+                        elif response.status_code == 401:
+                            last_error = f"401 Unauthorized with {auth_name} auth on {endpoint}"
+                            continue
+                        elif response.status_code == 403:
+                            last_error = f"403 Forbidden - insufficient permissions"
+                            continue
+                        elif response.status_code == 404:
+                            last_error = f"404 Not Found - endpoint {endpoint} does not exist"
+                            continue
+                        else:
+                            last_error = f"{response.status_code}: {response.text[:200]}"
+                            continue
+                            
+                    except requests.exceptions.ConnectionError:
+                        last_error = f"Connection failed to {base_url} - is Label Studio running?"
+                    except requests.exceptions.Timeout:
+                        last_error = f"Request timeout to {base_url}"
+                    except Exception as e:
+                        last_error = f"Request error: {str(e)}"
+            
+            # If we get here, all attempts failed
+            raise RuntimeError(f"All authentication attempts failed. Last error: {last_error}")
+            
     except Exception as e:
-        raise RuntimeError(f"Could not list projects: {e}")
+        if "401" in str(e) or "Unauthorized" in str(e):
+            raise RuntimeError(
+                f"Authentication failed (401 Unauthorized). Please check:\n"
+                f"1. Your API token is correct and not expired\n"
+                f"2. Generate a new token in Label Studio: Account & Settings → Access Token\n"
+                f"3. Make sure Label Studio is running and accessible\n"
+                f"Original error: {e}"
+            )
+        else:
+            raise RuntimeError(f"Could not list projects: {e}")
 
 
 def get_project(client, pid: int):
@@ -629,7 +729,23 @@ with st.sidebar:
     st.subheader("🔐 Connect")
     base_url = st.text_input("Base URL", value="http://localhost:8080")
     api_key = st.text_input("API Key (Personal Token)", type="password")
-    connect_btn = st.button("Connect", type="primary")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        test_btn = st.button("🧪 Test", help="Test connection without saving")
+    with col2:
+        connect_btn = st.button("Connect", type="primary")
+    
+    # Test connection
+    if test_btn and base_url and api_key:
+        with st.spinner("Testing connection..."):
+            success, message = test_connection(base_url.strip(), api_key.strip())
+            if success:
+                st.success(message)
+            else:
+                st.error(message)
+                if "API token" in message:
+                    st.info("💡 To get a new API token:\n1. Login to Label Studio\n2. Go to Account & Settings\n3. Navigate to Access Token\n4. Copy your token")
 
 if "client" not in st.session_state and connect_btn:
     try:
